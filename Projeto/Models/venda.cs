@@ -15,6 +15,8 @@ public partial class venda
 
     public bool verified { get; set; }
 
+    public double value { get; set; }
+
     public int id_sala { get; set; }
 
     public virtual sala id_salaNavigation { get; set; }
