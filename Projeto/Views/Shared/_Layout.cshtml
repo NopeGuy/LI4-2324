@@ -1,5 +1,5 @@
 ﻿@{
-    bool isLoggedIn = Context.Session.GetInt32("UserId") != null;
+    bool isLoggedIn = Context.Session.GetInt32("Id") != null;
 }
 
 <!DOCTYPE html>
@@ -24,7 +24,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
                         <!-- Additional Links Here -->
                     </ul>
@@ -32,7 +32,8 @@
                     <ul class="navbar-nav">
                         @if (isLoggedIn)
                         {
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Profile">Profile</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Profile">Perfil</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Rooms" asp-action="Sales">Vendas</a>
                             <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Logout</a>
                         }
                         else

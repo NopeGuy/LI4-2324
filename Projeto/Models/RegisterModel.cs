@@ -5,6 +5,7 @@ namespace Noitcua.Models
     public class RegisterModel
     {
         [Required]
+        [MinLength(3)]
         [MaxLength(20)]
         public string Handle { get; set; }
 

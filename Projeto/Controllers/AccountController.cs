@@ -23,42 +23,45 @@ public class AccountController : Controller
     {
         return View(new utilizador());
     }
+
     [HttpGet]
     public IActionResult ForgotPassword()
+    {
+        return View(new ForgotPasswordModel());
+    }
+
+    [HttpGet]
+    public IActionResult ResetPassword()
     {
         return View();
     }
 
     [HttpGet]
-    public IActionResult ResetPassword(string email, string handle)
+    public IActionResult ResetHandle() 
     {
-        var model = new ResetPasswordViewModel { Email = email, Handle = handle };
-        return View(model);
+        return View();    
     }
 
     [HttpGet]
-    /*public IActionResult Profile()
+    public IActionResult Profile()
     {
-        int? userId = HttpContext.Session.GetInt32("UserId");
+        int? userId = HttpContext.Session.GetInt32("Id");
         if(userId != null)
-        {
-
+        { 
+            return View();
         }
         else
         {
-            ModelState.AddModelError(string.Empty, "Session Timeout.");
+            return RedirectToAction("Login");
         }
     }
-    */
+    
     [HttpGet]
     public IActionResult Logout()
     {
         HttpContext.Session.Clear();
         return RedirectToAction("Login");
     }
-
-
-
 
     [HttpPost]
     public async Task<IActionResult> Login(utilizador user)
@@ -70,7 +73,9 @@ public class AccountController : Controller
 
             if (authenticatedUser != null)
             {
-                HttpContext.Session.SetInt32("UserId", user.id);
+                HttpContext.Session.SetInt32("Id", authenticatedUser.id);
+                HttpContext.Session.SetString("Handle", authenticatedUser.handle);
+                HttpContext.Session.SetString("Email", authenticatedUser.email);
                 return RedirectToAction("Index", "Home");
             }
 
@@ -103,7 +108,7 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
     {
         if (ModelState.IsValid)
         {
@@ -120,15 +125,59 @@ public class AccountController : Controller
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Passwords do not match.");
+                    ModelState.AddModelError(string.Empty, "Palavras passe não coincidem.");
                 }
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "Invalid request.");
+                ModelState.AddModelError(string.Empty, "A conta não existe.");
             }
         }
         return View(model);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+    {
+        if (ModelState.IsValid)
+        {
+            var user = await _context.utilizador.FindAsync(HttpContext.Session.GetInt32("Id"));
+            if (user != null)
+            {
+                user.password = model.Password;
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Profile");
+            }
+            ModelState.AddModelError(string.Empty, "User not found.");
+        }
+        return View(model);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> ResetHandle(string Handle)
+    {
+            var user = await _context.utilizador.FindAsync(HttpContext.Session.GetInt32("Id"));
+            if (user != null && !user.handle.Equals(Handle) && Handle.Length>3 && Handle.Length<=20)
+            {
+                var handleExists = await _context.utilizador.AnyAsync(u => u.handle == Handle);
+                if (!handleExists)
+                {
+                    user.handle = Handle;
+                    HttpContext.Session.SetString("Handle", Handle);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction("Profile");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Handle já existe. Tente novamente.");
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Handle inválido. Tente novamente.");
+            }
+        return View();
+        }
 
 }

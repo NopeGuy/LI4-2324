@@ -7,10 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Account\Class.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="Views\Home\Privacy.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Controllers\NewFile.txt" />
     <None Remove="Views\Account\NewFile.txt" />
     <None Remove="Views\Account\Per" />
     <None Remove="Views\Rooms\NewFile.txt" />

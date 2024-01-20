@@ -70,8 +70,8 @@ C:\Users\Bernardo\source\repos\Noitcua\obj\Debug\net8.0\Noitcua.pdb
 C:\Users\Bernardo\source\repos\Noitcua\obj\Debug\net8.0\Noitcua.genruntimeconfig.cache
 C:\Users\Bernardo\source\repos\Noitcua\obj\Debug\net8.0\ref\Noitcua.dll
 C:\Users\Lufe\source\repos\Noitcua\bin\Debug\net8.0\appsettings.Development.json
-C:\Users\Lufe\source\repos\Noitcua\bin\Debug\net8.0\efpt.config.json
 C:\Users\Lufe\source\repos\Noitcua\bin\Debug\net8.0\appsettings.json
+C:\Users\Lufe\source\repos\Noitcua\bin\Debug\net8.0\efpt.config.json
 C:\Users\Lufe\source\repos\Noitcua\bin\Debug\net8.0\Noitcua.staticwebassets.runtime.json
 C:\Users\Lufe\source\repos\Noitcua\bin\Debug\net8.0\Noitcua.exe
 C:\Users\Lufe\source\repos\Noitcua\bin\Debug\net8.0\Noitcua.deps.json

@@ -1,5 +1,4 @@
 ﻿@model Noitcua.Models.utilizador
-@*@model Noitcua.Models.utilizador*@
 @{
     ViewData["Title"] = "Profile";
 }
@@ -15,9 +14,10 @@
             border: 2px solid black;
             border-radius: 10px;
             margin: 20px;
+            position:absolute;
         }
 
-        .profile-label {
+        .profile-label,.options-link {
             font-weight: bold;
             margin-bottom: 5px;
         }
@@ -25,35 +25,57 @@
         .profile-info {
             margin-bottom: 15px;
         }
+
+        .options-container{
+            width: 300px;
+            padding: 20px;
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 10px;
+            margin: 20px;
+            text-align: center;
+            position: relative;
+            left:72%;
+            top:30px;
+        }
+
+        a{
+            color:black;
+        }
+
+        .options-user{
+            position:relative;
+            top:200px;
+            left:20px;
+        }
     </style>
 </head>
 <body>
-    <!--@*
     <div class="profile-container">
         <div class="profile-label">Email:</div>
-        <div class="profile-info">@Model.Email</div>
+        <div class="profile-info">@Context.Session.GetString("Email")</div>
 
-        <div class="profile-label">Handler:</div>
-        <div class="profile-info">@Model.Handler</div>
-    </div>
-
-        <div class="profile-container">
-        <div class="profile-label">Email:</div>
-        <div class="profile-info">@Model.Email</div>
-
-        <div class="profile-label">Handler:</div>
-        <div class="profile-info">@Model.Handler</div>
+        <div class="profile-label">Handle:</div>
+        <div class="profile-info">@Context.Session.GetString("Handle")</div>
     </div>
 
     <div class="options-container">
         <div class="option-link">
-            <a href="@Url.Action("TuasSalas", "Usuario")">Tuas Salas</a>
+            <a href="@Url.Action("TuasSalas", "Usuario")">Minhas Salas</a>
         </div>
-
+        <br />
+        <br />
+        <br />
         <div class="option-link">
             <a href="@Url.Action("HistoricoCompras", "Usuario")">Histórico</a>
         </div>
-    </div>> *@-->
+    </div>
 
+    <div class="options-user">
+        <a href="@Url.Action("ResetHandle", "Account")">Mudar Handle</a>
+        <br />
+        <br />
+        <a href="@Url.Action("ResetPassword", "Account")">Mudar a Palavra Passe</a>
+    </div>
 </body>
 </html>
