@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Bernardo\\source\\repos\\Noitcua\\Noitcua.csproj": {}
+    "C:\\Users\\Bernardo\\source\\repos\\noitcua\\Noitcua.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Bernardo\\source\\repos\\Noitcua\\Noitcua.csproj": {
+    "C:\\Users\\Bernardo\\source\\repos\\noitcua\\Noitcua.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Bernardo\\source\\repos\\Noitcua\\Noitcua.csproj",
+        "projectUniqueName": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\Noitcua.csproj",
         "projectName": "Noitcua",
-        "projectPath": "C:\\Users\\Bernardo\\source\\repos\\Noitcua\\Noitcua.csproj",
+        "projectPath": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\Noitcua.csproj",
         "packagesPath": "C:\\Users\\Bernardo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Bernardo\\source\\repos\\Noitcua\\obj\\",
+        "outputPath": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Bernardo\\AppData\\Roaming\\NuGet\\NuGet.Config",
