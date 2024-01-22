@@ -17,7 +17,5 @@ public partial class chat
 
     public int id_sala { get; set; }
 
-    public virtual sala id_salaNavigation { get; set; }
-
     public virtual utilizador id_utilizadorNavigation { get; set; }
 }

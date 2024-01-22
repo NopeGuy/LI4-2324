@@ -10,6 +10,4 @@ public partial class comprador
     public int id_user { get; set; }
 
     public virtual utilizador id_userNavigation { get; set; }
-
-    public virtual ICollection<sala> sala { get; set; } = new List<sala>();
 }

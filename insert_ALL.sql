@@ -71,9 +71,9 @@ INSERT INTO [dbo].[sala]
      VALUES
 /******(<estado, bit,>,<titulo, nvarchar(50),>,<descricao, nvarchar(200),>,<id_comprador, int,>)******/
 
-           (1, 'Sala 1', 'Description of Sala 1', 1),
-           (1, 'Sala 2', 'Description of Sala 2', 2),
-           (1, 'Sala 3', 'Description of Sala 3', 3);
+           (0, 'Sala 1', 'Description of Sala 1', 1),
+           (0, 'Sala 2', 'Description of Sala 2', 2),
+           (0, 'Sala 3', 'Description of Sala 3', 3);
 
 GO
 

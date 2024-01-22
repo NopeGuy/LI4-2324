@@ -2665,11 +2665,19 @@
   "project": {
     "version": "1.0.0",
     "restore": {
+<<<<<<< Updated upstream
       "projectUniqueName": "C:\\Users\\Bernardo\\source\\repos\\Noitcua\\Noitcua.csproj",
       "projectName": "Noitcua",
       "projectPath": "C:\\Users\\Bernardo\\source\\repos\\Noitcua\\Noitcua.csproj",
       "packagesPath": "C:\\Users\\Bernardo\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\Bernardo\\source\\repos\\Noitcua\\obj\\",
+=======
+      "projectUniqueName": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\Noitcua.csproj",
+      "projectName": "Noitcua",
+      "projectPath": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\Noitcua.csproj",
+      "packagesPath": "C:\\Users\\Bernardo\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\obj\\",
+>>>>>>> Stashed changes
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Bernardo\\AppData\\Roaming\\NuGet\\NuGet.Config",

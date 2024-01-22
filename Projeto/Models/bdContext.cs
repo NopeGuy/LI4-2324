@@ -52,11 +52,6 @@ public partial class bdContext : DbContext
                 .IsRequired()
                 .HasMaxLength(100);
 
-            entity.HasOne(d => d.id_salaNavigation).WithMany(p => p.chat)
-                .HasForeignKey(d => d.id_sala)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_chat_sala");
-
             entity.HasOne(d => d.id_utilizadorNavigation).WithMany(p => p.chat)
                 .HasForeignKey(d => d.id_utilizador)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -94,11 +89,6 @@ public partial class bdContext : DbContext
             entity.Property(e => e.titulo)
                 .IsRequired()
                 .HasMaxLength(50);
-
-            entity.HasOne(d => d.id_compradorNavigation).WithMany(p => p.sala)
-                .HasForeignKey(d => d.id_comprador)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_sala_comprador");
         });
 
         modelBuilder.Entity<utilizador>(entity =>
@@ -124,11 +114,6 @@ public partial class bdContext : DbContext
             entity.Property(e => e.payment_method)
                 .IsRequired()
                 .HasMaxLength(20);
-
-            entity.HasOne(d => d.id_salaNavigation).WithMany(p => p.venda)
-                .HasForeignKey(d => d.id_sala)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_venda_sala");
         });
 
         modelBuilder.Entity<vendedor>(entity =>
@@ -142,11 +127,6 @@ public partial class bdContext : DbContext
         modelBuilder.Entity<vendedor_has_sala>(entity =>
         {
             entity.HasNoKey();
-
-            entity.HasOne(d => d.id_salaNavigation).WithMany()
-                .HasForeignKey(d => d.id_sala)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_vendedor_has_sala_sala");
 
             entity.HasOne(d => d.id_vendedorNavigation).WithMany()
                 .HasForeignKey(d => d.id_vendedor)

@@ -1,0 +1,116 @@
+﻿@model IEnumerable<Noitcua.Models.chat>
+@{
+    ViewData["Title"] = "Room";
+}
+<html>
+    <head>
+    <style>
+        .container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .chat-container {
+            width: 70%;
+            background-color: #f2f2f2;
+            margin-right: 20px;
+            padding: 10px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .message-input {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .description-accounts-container {
+            width: 30%;
+            background-color: #ddd;
+            padding: 10px;
+            height: 90vh;
+        }
+
+        .description {
+            padding: 10px;
+            background-color: #fff;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.2);
+        }
+
+        .accounts {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .account {
+            background-color: #fff;
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 4px;
+        }
+    </style>
+
+    </head>
+    <body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 chat-container">
+            <!-- Chat messages display -->
+            <div class="messages">
+                <div class="message">
+                        @foreach (var message  in Model)
+                        {
+                            /*
+                            @if (sala.estado == 0)
+                            {
+                                <div class="result-box">
+                                    <b><div class="result-title">@sala.titulo</div></b>
+                                    <br />
+                                    <span>@sala.descricao</span>
+                                    <br /><br />
+                                    <a class="result-button" href="@Url.Action("View", "Rooms", new {id=sala.id})">Entrar na Sala</a>
+                                </div>
+                            }
+                            */
+                        }
+                    <span class="username">Triggered:</span>
+                    Eu ofereço umas sapatilhas por 30€ <a href="https://imgur.com/a/5IVOpHS" target="_blank">https://imgur.com/a/5IVOpHS</a>
+                </div>
+                <!-- Repeat for each message -->
+            </div>
+
+            <!-- Message input -->
+            <div class="message-input">
+                <input type="text" class="form-control" placeholder="Type a message..." />
+                <button class="btn btn-primary">Send</button>
+            </div>
+        </div>
+
+        <div class="col-md-4 description-accounts-container">
+            <!-- Descrição -->
+            <div class="description">
+                <h3>Descrição</h3>
+                <p>Sapatilhas de preferência até 100€ e pouco usadas. Obrigatório serem de cor branca.</p>
+            </div>
+
+            <!-- Accounts display -->
+            <div class="accounts">
+                <div class="account">NopeGuy</div>
+                <div class="account">SensiBot</div>
+                <div class="account">Triggered</div>
+                <!-- Repeat for each account -->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
