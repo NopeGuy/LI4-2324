@@ -1,5 +1,6 @@
 ﻿@{
     bool isLoggedIn = Context.Session.GetInt32("Id") != null;
+    bool isAdmin = Context.Session.GetInt32("Admin") == 1;
 }
 
 <!DOCTYPE html>
@@ -25,10 +26,11 @@
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                            @if(isAdmin){
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Manager">Admin</a>
+                            }
                         </li>
-                        <!-- Additional Links Here -->
                     </ul>
-                    <!-- Login Link -->
                     <ul class="navbar-nav">
                         @if (isLoggedIn)
                         {

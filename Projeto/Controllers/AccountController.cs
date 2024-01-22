@@ -69,13 +69,23 @@ public class AccountController : Controller
         if (ModelState.IsValid)
         {
             var authenticatedUser = await _context.utilizador
-                .FirstOrDefaultAsync(u => u.email == user.email && u.password == user.password);
+                .FirstOrDefaultAsync(u => u.email == user.email && u.password == user.password)
 
             if (authenticatedUser != null)
             {
                 HttpContext.Session.SetInt32("Id", authenticatedUser.id);
                 HttpContext.Session.SetString("Handle", authenticatedUser.handle);
                 HttpContext.Session.SetString("Email", authenticatedUser.email);
+
+                var admin = await _context.admin.FirstOrDefaultAsync(a => a.id_user == authenticatedUser.id);
+                if (admin != null)
+                {
+                    HttpContext.Session.SetInt32("Admin",1);
+                }
+                else
+                {
+                    HttpContext.Session.SetInt32("Admin", 0);
+                }
                 return RedirectToAction("Index", "Home");
             }
 

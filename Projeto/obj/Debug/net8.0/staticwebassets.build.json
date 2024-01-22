@@ -1,10 +1,6 @@
 {
   "Version": 1,
-<<<<<<< Updated upstream
-  "Hash": "Wy0O2UwcK8NbCprlDueWTIOQc1/6H9JFK6Nl/tAv3os=",
-=======
   "Hash": "T2t1/WDm68iqvC8IYC4tNiTlGK7871TuVBlfZ/m5VW0=",
->>>>>>> Stashed changes
   "Source": "Noitcua",
   "BasePath": "_content/Noitcua",
   "Mode": "Default",
@@ -97,12 +93,6 @@
       "OriginalItemSpec": "wwwroot\\favicon.ico"
     },
     {
-<<<<<<< Updated upstream
-      "Identity": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\wwwroot\\js\\site.js",
-      "SourceId": "Noitcua",
-      "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\wwwroot\\",
-=======
       "Identity": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\wwwroot\\img\\logo.png",
       "SourceId": "Noitcua",
       "SourceType": "Discovered",
@@ -126,7 +116,6 @@
       "SourceId": "Noitcua",
       "SourceType": "Discovered",
       "ContentRoot": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\wwwroot\\",
->>>>>>> Stashed changes
       "BasePath": "_content/Noitcua",
       "RelativePath": "js/site.js",
       "AssetKind": "All",

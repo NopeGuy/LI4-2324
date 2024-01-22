@@ -13,13 +13,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
-<<<<<<< Updated upstream
-=======
       "Id": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\wwwroot\\img\\logo.png",
       "PackagePath": "staticwebassets\\img\\logo.png"
     },
     {
->>>>>>> Stashed changes
       "Id": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\wwwroot\\js\\site.js",
       "PackagePath": "staticwebassets\\js\\site.js"
     },
