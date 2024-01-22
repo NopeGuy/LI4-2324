@@ -221,7 +221,7 @@ GO
 
 CREATE TABLE [dbo].[sala](
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	[estado] [bit] NOT NULL,
+	[estado] [int] NOT NULL,
 	[titulo] [nvarchar](50) NOT NULL,
 	[descricao] [nvarchar](200) NULL,
 	[id_comprador] [int] NOT NULL,

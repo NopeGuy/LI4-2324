@@ -32,7 +32,7 @@ namespace Noitcua.Controllers
             ViewData["NumeroSalas"] = _context.sala.Where(s => s.id_comprador == user.id && s.estado == 0).Count().ToString();
             return View();
         }
-                
+
         [HttpGet]
         public async Task<IActionResult> MyRooms()
         {
@@ -78,7 +78,8 @@ namespace Noitcua.Controllers
             ViewData["Id_sala"] = id;
             var sala = _context.sala.Where(s => s.id == id);
 
-            if ( sala != null ) {
+            if (sala != null)
+            {
                 return View(sala);
             }
             else
@@ -91,20 +92,20 @@ namespace Noitcua.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(sala info)
         {
-            
+
             if (ModelState.IsValid)
             {
                 var userId = HttpContext.Session.GetInt32("Id");
 
                 if (userId != null)
                 {
-                    var comprador = _context.comprador.Where(a => a.id_user == (int)userId);
-                    if(comprador == null)
+                    var comprador = _context.comprador.Where(a => a.id_user == (int)userId).ToList();
+                    if (comprador.Count == 0)
                     {
                         comprador novo = new comprador();
                         novo.id_user = (int)userId;
                         _context.comprador.Add(novo);
-                        _context.SaveChanges();
+                        await _context.SaveChangesAsync();
                     }
 
                     sala nova = new sala();
@@ -116,16 +117,16 @@ namespace Noitcua.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction("View", "Rooms", new { id = nova.id });
                 }
-                else 
+                else
                 {
-                    return RedirectToAction("Login","Account");
+                    return RedirectToAction("Login", "Account");
                 }
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "Não foi possivel criar a sala...");
             }
-            
+
             return View();
         }
 

@@ -153,11 +153,10 @@ GO
 
 CREATE TABLE [dbo].[sala](
 	[id] [int] IDENTITY(1,1) NOT NULL,
-	[estado] [bit] NOT NULL,
+	[estado] [int] NOT NULL,
 	[titulo] [nvarchar](50) NOT NULL,
 	[descricao] [nvarchar](200) NULL,
 	[id_comprador] [int] NOT NULL,
-	[id_vendedor_has_sala] [int] NOT NULL,
  CONSTRAINT [PK_sala] PRIMARY KEY CLUSTERED 
 (
 	[id] ASC
@@ -226,6 +225,7 @@ CREATE TABLE [dbo].[venda](
 	[payment_method] [nvarchar](20) NOT NULL,
 	[date] [datetime] NOT NULL,
 	[verified] [bit] NOT NULL,
+	[value] [float] NOT NULL,
 	[id_sala] [int] NOT NULL,
  CONSTRAINT [PK_venda] PRIMARY KEY CLUSTERED 
 (

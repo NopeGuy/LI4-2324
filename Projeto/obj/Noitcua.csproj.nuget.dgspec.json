@@ -1,20 +1,24 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Bernardo\\source\\repos\\noitcua\\Noitcua.csproj": {}
+    "C:\\Users\\Lufe\\source\\repos\\Noitcua\\Noitcua.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Bernardo\\source\\repos\\noitcua\\Noitcua.csproj": {
+    "C:\\Users\\Lufe\\source\\repos\\Noitcua\\Noitcua.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\Noitcua.csproj",
+        "projectUniqueName": "C:\\Users\\Lufe\\source\\repos\\Noitcua\\Noitcua.csproj",
         "projectName": "Noitcua",
-        "projectPath": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\Noitcua.csproj",
-        "packagesPath": "C:\\Users\\Bernardo\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Bernardo\\source\\repos\\noitcua\\obj\\",
+        "projectPath": "C:\\Users\\Lufe\\source\\repos\\Noitcua\\Noitcua.csproj",
+        "packagesPath": "C:\\Users\\Lufe\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Lufe\\source\\repos\\Noitcua\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Users\\Lufe\\AppData\\Roaming\\Godot\\mono\\GodotNuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\Bernardo\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Lufe\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Lufe\\AppData\\Roaming\\NuGet\\config\\Godot.Offline.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

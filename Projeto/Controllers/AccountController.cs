@@ -69,7 +69,7 @@ public class AccountController : Controller
         if (ModelState.IsValid)
         {
             var authenticatedUser = await _context.utilizador
-                .FirstOrDefaultAsync(u => u.email == user.email && u.password == user.password)
+                .FirstOrDefaultAsync(u => u.email == user.email && u.password == user.password);
 
             if (authenticatedUser != null)
             {

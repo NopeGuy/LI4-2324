@@ -69,11 +69,11 @@ INSERT INTO [dbo].[sala]
            ,[descricao]
            ,[id_comprador])
      VALUES
-/******(<estado, bit,>,<titulo, nvarchar(50),>,<descricao, nvarchar(200),>,<id_comprador, int,>)******/
+/******(<estado, int,>,<titulo, nvarchar(50),>,<descricao, nvarchar(200),>,<id_comprador, int,>)******/
 
-           (0, 'Sala 1', 'Description of Sala 1', 1),
-           (0, 'Sala 2', 'Description of Sala 2', 2),
-           (0, 'Sala 3', 'Description of Sala 3', 3);
+           (1, 'Sala 1', 'Description of Sala 1', 1),
+           (1, 'Sala 2', 'Description of Sala 2', 2),
+           (1, 'Sala 3', 'Description of Sala 3', 3);
 
 GO
 
@@ -95,13 +95,14 @@ INSERT INTO [dbo].[venda]
            ([payment_method]
            ,[date]
            ,[verified]
+		   ,[value]
            ,[id_sala])
      VALUES
-/******(<payment_method, nvarchar(20),>,<date, datetime,>,<verified, bit,>,<id_sala, int,>)******/
+/******(<payment_method, nvarchar(20),>,<date, datetime,>,<verified, bit,>,<value, float>,<id_sala, int,>)******/
 
-           ('Credit Card', '2023-01-02 14:30:00', 1, 1),
-           ('PayPal', '2023-01-03 16:45:00', 0, 2),
-           ('Cash', '2023-01-04 18:00:00', 1, 3);
+           ('Credit Card', '2023-01-02 14:30:00', 1,28.0, 1),
+           ('PayPal', '2023-01-03 16:45:00', 0,1.0, 2),
+           ('Cash', '2023-01-04 18:00:00', 1,32.0, 3);
 
 GO
 
