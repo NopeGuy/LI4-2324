@@ -115,7 +115,8 @@ namespace Noitcua.Controllers
                 venda Venda = await _context.venda.FirstOrDefaultAsync(v => v.id_sala == id_sala);
                 var vendedor = _context.vendedor.FirstOrDefault(v => v.id == Venda.id_vendedor);
                 string nome_utilizador = _context.utilizador.FirstOrDefault(u => u.id == vendedor.id_user).handle;
-                ViewData["User"+vendedor.id] = nome_utilizador;
+                ViewData["User" + vendedor.id] = nome_utilizador;
+                ViewData["Sala" + id_sala] = salaAtual.titulo;
                 vendas.Add(Venda);
             }
             /*
@@ -138,7 +139,6 @@ namespace Noitcua.Controllers
                     Venda = combined.Venda,
                     Vendedor = vendedor
                 }).ToListAsync(); */
-
             return View(vendas);
         }
 
