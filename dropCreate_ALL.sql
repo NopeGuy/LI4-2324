@@ -222,6 +222,7 @@ GO
 
 CREATE TABLE [dbo].[venda](
 	[id] [int] IDENTITY(1,1) NOT NULL,
+	[id_vendedor] [int] NOT NULL,
 	[payment_method] [nvarchar](20) NOT NULL,
 	[date] [datetime] NOT NULL,
 	[verified] [bit] NOT NULL,
@@ -237,6 +238,11 @@ GO
 ALTER TABLE [dbo].[venda]  WITH CHECK ADD  CONSTRAINT [FK_venda_sala] FOREIGN KEY([id_sala])
 REFERENCES [dbo].[sala] ([id])
 GO
+
+ALTER TABLE [dbo].[venda]  WITH CHECK ADD  CONSTRAINT [FK_venda_vendedor] FOREIGN KEY([id_vendedor])
+REFERENCES [dbo].[vendedor] ([id])
+GO
+
 
 ALTER TABLE [dbo].[venda] CHECK CONSTRAINT [FK_venda_sala]
 GO

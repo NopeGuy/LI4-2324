@@ -80,7 +80,7 @@ public class AccountController : Controller
                 var admin = await _context.admin.FirstOrDefaultAsync(a => a.id_user == authenticatedUser.id);
                 if (admin != null)
                 {
-                    HttpContext.Session.SetInt32("Admin",1);
+                    HttpContext.Session.SetInt32("Admin", 1);
                 }
                 else
                 {

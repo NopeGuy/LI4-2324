@@ -16,7 +16,7 @@
                 width: 600px;
                 margin: 20px;
             }
-
+           
             .result-box {
                 width: 100%;
                 padding: 15px;
@@ -81,7 +81,7 @@
                 <div class="result-title">@sala.titulo</div>
                 <span>@sala.descricao</span>
                 <br /><br />
-                        <a class="result-button" href="@Url.Action("View", "Rooms", new {id=sala.id})">Entrar na Sala</a>
+                        <a class="result-button" href="@Url.Action("Room", "Rooms", new {id=sala.id})">Entrar na Sala</a>
             </div>
             }
         }

@@ -69,7 +69,7 @@ INSERT INTO [dbo].[sala]
            ,[descricao]
            ,[id_comprador])
      VALUES
-/******(<estado, int,>,<titulo, nvarchar(50),>,<descricao, nvarchar(200),>,<id_comprador, int,>)******/
+/******(<estado, bit,>,<titulo, nvarchar(50),>,<descricao, nvarchar(200),>,<id_comprador, int,>)******/
 
            (1, 'Sala 1', 'Description of Sala 1', 1),
            (1, 'Sala 2', 'Description of Sala 2', 2),
@@ -92,7 +92,8 @@ INSERT INTO [dbo].[chat]
 GO
 
 INSERT INTO [dbo].[venda]
-           ([payment_method]
+           ([id_vendedor]
+		   ,[payment_method]
            ,[date]
            ,[verified]
 		   ,[value]
@@ -100,9 +101,9 @@ INSERT INTO [dbo].[venda]
      VALUES
 /******(<payment_method, nvarchar(20),>,<date, datetime,>,<verified, bit,>,<value, float>,<id_sala, int,>)******/
 
-           ('Credit Card', '2023-01-02 14:30:00', 1,28.0, 1),
-           ('PayPal', '2023-01-03 16:45:00', 0,1.0, 2),
-           ('Cash', '2023-01-04 18:00:00', 1,32.0, 3);
+           (1,'Credit Card', '2023-01-02 14:30:00', 1,28.0, 1),
+           (2,'PayPal', '2023-01-03 16:45:00', 0,1.0, 2),
+           (2,'Cash', '2023-01-04 18:00:00', 1,32.0, 3);
 
 GO
 
@@ -126,5 +127,5 @@ SELECT [id_user] AS 'Comprador ID' FROM [dbo].[comprador];
 SELECT [id] AS 'Denuncia ID' FROM [dbo].[denuncia];
 SELECT [id] AS 'Sala ID', [titulo] AS 'Sala Title' FROM [dbo].[sala];
 SELECT [id] AS 'Chat ID', [mensagem] AS 'Chat Message' FROM [dbo].[chat];
-SELECT [payment_method] AS 'Payment Method', [date] AS 'Sale Date' FROM [dbo].[venda];
+SELECT [payment_method] AS 'Payment Method', [date] AS 'Sale Date',[id_vendedor] As 'Id Vendedor' FROM [dbo].[venda];
 SELECT [id_vendedor] AS 'Vendedor ID', [id_sala] AS 'Sala ID' FROM [dbo].[vendedor_has_sala];

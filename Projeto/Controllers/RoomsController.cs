@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Noitcua.Models;
 using System.Diagnostics;
@@ -44,6 +45,7 @@ namespace Noitcua.Controllers
 
             var vendedor = await _context.vendedor.FirstOrDefaultAsync(v => v.id_user == userId);
             var comprador = await _context.comprador.FirstOrDefaultAsync(c => c.id_user == userId);
+            
 
             bool isVendedor = vendedor != null;
             bool isComprador = comprador != null;
@@ -53,34 +55,155 @@ namespace Noitcua.Controllers
                 return NotFound("O utilizador ainda não participa em nenhuma sala!");
             }
 
-            IQueryable<sala> salasAsComprador = isComprador
-                ? _context.sala.Where(s => s.id_comprador == comprador.id && s.estado != 2)
-                : Enumerable.Empty<sala>().AsQueryable();
+            var salas = new List<sala>();
+            
+            if (isComprador)
+            {
+                ViewData["IdComp"] = comprador.id;
+                var salasAsComprador = await _context.sala
+                    .Where(s => s.id_comprador == comprador.id && s.estado != 2)
+                    .ToListAsync();
+                salas.AddRange(salasAsComprador);
+            }
 
-            IQueryable<sala> salasAsVendedor = isVendedor
-                ? _context.vendedor_has_sala
+            if (isVendedor)
+            {
+                ViewData["IdVend"] = vendedor.id;
+                var salasAsVendedor = await _context.vendedor_has_sala
                     .Where(vs => vs.id_vendedor == vendedor.id)
                     .Join(_context.sala, vs => vs.id_sala, s => s.id, (vs, s) => s)
                     .Where(s => s.estado != 2)
-                : Enumerable.Empty<sala>().AsQueryable();
+                    .ToListAsync();
+                salas.AddRange(salasAsVendedor);
+            }
 
-            var salas = await salasAsComprador.Union(salasAsVendedor).ToListAsync();
+            salas = salas.Distinct().ToList();
 
             return View(salas);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> History()
+        {
+            var userId = HttpContext.Session.GetInt32("Id");
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var comprador = await _context.comprador.FirstOrDefaultAsync(c => c.id_user == userId);
+            bool isComprador = comprador != null;
+
+            var vendaProcesso = await _context.sala.FirstOrDefaultAsync(s => s.id_comprador == userId && s.estado != 0);
+            bool hasVendaProc = vendaProcesso != null;
+
+            if (!isComprador || !hasVendaProc)
+            {
+                return NotFound("O utilizador ainda não possui nenhuma sala com uma venda em processo ou terminada.");
+            }
+
+            IQueryable<sala> salasAsComprador = _context.sala
+                    .Where(s => s.id_comprador == comprador.id && s.estado != 0);
+
+            // Join Sala com Venda
+            var salasWithVenda = salasAsComprador.Join(
+                _context.venda,
+                sala => sala.id,
+                venda => venda.id_sala,
+                (sala, venda) => new { Sala = sala, Venda = venda });
+
+            // Join com vendedor
+            var result = await salasWithVenda.Join(
+                _context.vendedor,
+                combined => combined.Venda.id_vendedor,
+                vendedor => vendedor.id,
+                (combined, vendedor) => new
+                {
+                    Sala = combined.Sala,
+                    Venda = combined.Venda,
+                    Vendedor = vendedor
+                }).ToListAsync();
+
+            return View(result);
+        }
 
 
 
         [HttpGet]
-        public IActionResult View(int id)
+        public IActionResult Room(int id)
         {
+            var user = HttpContext.Session.GetInt32("Id");
+            if(user==null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            bool isComp;
+            var comprador = _context.comprador.FirstOrDefault(c => c.id_user == user);
+            if(comprador==null)
+            {
+                isComp = false;
+            }
+            else
+            {
+                var owner = _context.sala.FirstOrDefault(os => os.id == id && os.id_comprador == comprador.id);
+                isComp = owner != null;
+            }
+
+            if(!isComp)
+            {
+                var vendedor = _context.vendedor.FirstOrDefault(v => v.id_user == user);
+                if (vendedor == null)
+                {
+                    vendedor vens = new vendedor();
+                    vens.id_user = (int)user;
+                    _context.vendedor.Add(vens);
+                    _context.SaveChanges();
+                }
+                var ven = _context.vendedor.FirstOrDefault(v => v.id_user == user);
+
+                var vendedorInSala = _context.vendedor_has_sala.FirstOrDefault(vs => vs.id_sala == id && vs.id_vendedor == ven.id);
+                if (vendedorInSala == null)
+                {
+                    var sql = "INSERT INTO vendedor_has_sala (id_vendedor, id_sala) VALUES (@vendedorId, @salaId)";
+                    _context.Database.ExecuteSqlRaw(sql,
+                        new SqlParameter("@vendedorId", ven.id),
+                        new SqlParameter("@salaId", id));
+
+                }
+            }
+
+
             ViewData["Id_sala"] = id;
-            var sala = _context.sala.Where(s => s.id == id);
+            ViewData["Id_user"] = user;
+
+            // Todas as mensagens deste chat
+            var chatMessages = _context.chat.Where(c => c.id_sala == id);
+
+            // Todos os ids unicos do chat
+            var userIds =  chatMessages.Select(c => c.id_utilizador).Distinct().ToList();
+
+            // Handles dos users
+            var usersHandles = _context.utilizador
+                .Where(u => userIds.Contains(u.id))
+                .Select(u => u.handle)
+                .ToList();
+
+            // Em Lista
+            ViewData["UsersHandles"] = usersHandles;
+
+            ViewData["Last_time"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            var sala = _context.sala.Where(s => s.id == id).First();
+            var compUserId = _context.comprador.Find(sala.id_comprador).id_user;
+            var compHandle = _context.utilizador.Find(compUserId).handle;
+            ViewData["Handle_Comprador"] = "C " + compHandle;
+            var chat = _context.chat.Where(c => c.id_sala == id);
+            ViewData["Descricao"] = sala.descricao;
+
 
             if (sala != null)
             {
-                return View(sala);
+                return View(chat);
             }
             else
             {
@@ -88,7 +211,41 @@ namespace Noitcua.Controllers
             }
         }
 
+        [HttpGet]
+        public IActionResult CheckChatChanges(int id, string last_time)
+        {
+            var data_atual = DateTime.Parse(last_time);
+            var chat = _context.chat.Where(c => c.id_sala == id).Where(c => c.data > data_atual).ToList();
 
+            var json = new chatResp();
+            json.date_verified = last_time; //TODO: Adicionar 1 segundo
+
+            if (chat.Any())
+            {
+                json.hasUpdates = true;
+            }
+
+            json.error = false;
+
+
+            return Json(json);
+
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendMessage(string id_utilizador, string id_sala, string message)
+        {
+            chat c = new chat();
+            c.mensagem = message;//TODO: Parse de comandos
+            c.id_sala = int.Parse(id_sala);
+            c.id_utilizador = int.Parse( id_utilizador);
+            c.data = DateTime.Now;
+            var msg = _context.chat.Add(c);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Room", "Rooms", new { id = c.id_sala });
+        }
+        
         [HttpPost]
         public async Task<IActionResult> Create(sala info)
         {
@@ -115,7 +272,7 @@ namespace Noitcua.Controllers
                     nova.id_comprador = _context.comprador.FirstOrDefault(a => a.id_user == (int)userId).id;
                     _context.sala.Add(nova);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction("View", "Rooms", new { id = nova.id });
+                    return RedirectToAction("Room", "Rooms", new { id = nova.id });
                 }
                 else
                 {

@@ -1,0 +1,82 @@
+﻿@model IEnumerable<Noitcua.Models.venda>
+@{
+    ViewData["Title"] = "History";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .purchase-container {
+            width: 600px;
+            padding: 20px;
+            background-color: white;
+            border: 2px solid black;
+        }
+
+        .purchase-box {
+            width: 90%;
+            padding: 15px;
+            background-color: white;
+            border: 2px solid black;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .purchase-info {
+            margin-bottom: 10px;
+        }
+
+        .pending-checkbox {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="purchase-container">
+        <h2>Histórico de Compras</h2>
+
+        @foreach (var venda in Model)
+        {
+            <div class="result-box">
+                <div class="sala-title">
+                    <b><!-- Colocar aqui o titulo da sala-->:</b>
+                    <br />
+                    @if(venda.verified == true)
+                    {
+                        <p>Realizada por: <!--Colocar Aqui o nome do vendedor--></p>
+                    }
+                    else
+                    {
+                        <p>A realizar com: <!--Colocar Aqui o nome do vendedor--></p>
+                    }
+                </div>
+
+                <br />
+
+                <div>
+                    <h4>@venda.value</h4>
+                </div>
+
+                <div>
+                    <h4>@venda.date</h4>
+                </div>
+
+                <br /><br />
+
+                <div>
+                    @if (venda.verified == true)
+                    {
+                        <a class="result-button" href="@Url.Action(@*//TODO: Colocar aqui a action para mudar verified*@)">Confirmar Entrega</a>
+                    }
+                    else
+                    {
+                        <h3>Entregue</h3>
+                    }
+                </div>
+            </div>
+        }
+        </div>
+
+</body>
+</html>

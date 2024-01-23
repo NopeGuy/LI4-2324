@@ -9,11 +9,15 @@ public partial class venda
 {
     public int id { get; set; }
 
+    public int id_vendedor { get; set; }
+
     public string payment_method { get; set; }
 
     public DateTime date { get; set; }
 
     public bool verified { get; set; }
 
-    public int id_sala { get; set; }
+    public float value { get; set; }
+
+    public int id_sala { get; set; }    
 }

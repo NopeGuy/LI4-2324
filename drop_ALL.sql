@@ -14,6 +14,9 @@ GO
 ALTER TABLE [dbo].[venda] DROP CONSTRAINT [FK_venda_sala]
 GO
 
+ALTER TABLE [dbo].[venda] DROP CONSTRAINT [FK_venda_vendedor]
+GO
+
 IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[venda]') AND type in (N'U'))
 DROP TABLE [dbo].[venda]
 GO
