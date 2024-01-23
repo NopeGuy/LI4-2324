@@ -92,19 +92,33 @@ namespace Noitcua.Controllers
             }
 
             var comprador = await _context.comprador.FirstOrDefaultAsync(c => c.id_user == userId);
-            bool isComprador = comprador != null;
 
-            var vendaProcesso = await _context.sala.FirstOrDefaultAsync(s => s.id_comprador == userId && s.estado != 0);
-            bool hasVendaProc = vendaProcesso != null;
-
-            if (!isComprador || !hasVendaProc)
+            if (comprador.id == 0)
             {
                 return NotFound("O utilizador ainda não possui nenhuma sala com uma venda em processo ou terminada.");
             }
 
-            IQueryable<sala> salasAsComprador = _context.sala
-                    .Where(s => s.id_comprador == comprador.id && s.estado != 0);
+            var vendaProcesso = await _context.sala.FirstOrDefaultAsync(s => s.id_comprador == comprador.id && s.estado != 0);
 
+            if (vendaProcesso.id == 0)
+            {
+                return NotFound("O utilizador ainda não possui nenhuma sala com uma venda em processo ou terminada.");
+            }
+
+            var salasAsComprador = _context.sala
+                    .Where(s => s.id_comprador == comprador.id && s.estado != 0).ToList();
+
+
+            var vendas = new List<venda>();
+            foreach (var salaAtual in salasAsComprador) { 
+                int id_sala = salaAtual.id;
+                venda Venda = await _context.venda.FirstOrDefaultAsync(v => v.id_sala == id_sala);
+                int id_user = _context.vendedor.FirstOrDefault(v => v.id == Venda.id_vendedor).id;
+                string nome_utilizador = _context.utilizador.FirstOrDefault(u => u.id == id_user).handle;
+                ViewData["User"+id_user] = nome_utilizador;
+                vendas.Add(Venda);
+            }
+            /*
             // Join Sala com Venda
             var salasWithVenda = salasAsComprador.Join(
                 _context.venda,
@@ -112,6 +126,7 @@ namespace Noitcua.Controllers
                 venda => venda.id_sala,
                 (sala, venda) => new { Sala = sala, Venda = venda });
 
+            /**
             // Join com vendedor
             var result = await salasWithVenda.Join(
                 _context.vendedor,
@@ -122,9 +137,9 @@ namespace Noitcua.Controllers
                     Sala = combined.Sala,
                     Venda = combined.Venda,
                     Vendedor = vendedor
-                }).ToListAsync();
+                }).ToListAsync(); */
 
-            return View(result);
+            return View(vendas);
         }
 
 
@@ -237,7 +252,9 @@ namespace Noitcua.Controllers
         public async Task<IActionResult> SendMessage(string id_utilizador, string id_sala, string message)
         {
             chat c = new chat();
-            c.mensagem = message;//TODO: Parse de comandos
+            //TODO: Parse de comandos
+            var nome = _context.utilizador.Where(u => u.id == int.Parse(id_utilizador)).FirstOrDefault().handle;
+            c.mensagem = nome + ": " + message;
             c.id_sala = int.Parse(id_sala);
             c.id_utilizador = int.Parse( id_utilizador);
             c.data = DateTime.Now;
