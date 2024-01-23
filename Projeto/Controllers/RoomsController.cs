@@ -93,7 +93,7 @@ namespace Noitcua.Controllers
 
             var comprador = await _context.comprador.FirstOrDefaultAsync(c => c.id_user == userId);
 
-            if (comprador.id == 0)
+            if (comprador == null)
             {
                 return NotFound("O utilizador ainda não possui nenhuma sala com uma venda em processo ou terminada.");
             }
@@ -113,9 +113,9 @@ namespace Noitcua.Controllers
             foreach (var salaAtual in salasAsComprador) { 
                 int id_sala = salaAtual.id;
                 venda Venda = await _context.venda.FirstOrDefaultAsync(v => v.id_sala == id_sala);
-                int id_user = _context.vendedor.FirstOrDefault(v => v.id == Venda.id_vendedor).id;
-                string nome_utilizador = _context.utilizador.FirstOrDefault(u => u.id == id_user).handle;
-                ViewData["User"+id_user] = nome_utilizador;
+                var vendedor = _context.vendedor.FirstOrDefault(v => v.id == Venda.id_vendedor);
+                string nome_utilizador = _context.utilizador.FirstOrDefault(u => u.id == vendedor.id_user).handle;
+                ViewData["User"+vendedor.id] = nome_utilizador;
                 vendas.Add(Venda);
             }
             /*
@@ -302,6 +302,17 @@ namespace Noitcua.Controllers
             }
 
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmDelivery(string id_sala, string id_venda)
+        {
+            _context.Database.ExecuteSqlRaw("UPDATE sala SET estado = 2 WHERE id = @id_sala",
+                               new SqlParameter("@id_sala", id_sala));
+            _context.Database.ExecuteSqlRaw("UPDATE venda SET verified = 0 WHERE id = @id_venda",
+                                              new SqlParameter("@id_venda", id_venda));
+            await _context.SaveChangesAsync();
+            return RedirectToAction("History", "Rooms");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

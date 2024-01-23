@@ -67,7 +67,7 @@
                 <div>
                     @if (venda.verified == true)
                     {
-                        <a class="result-button" href="@Url.Action(@*//TODO: Colocar aqui a action para mudar verified*@)">Confirmar Entrega</a>
+                        <a class="result-button" href="@Url.Action("ConfirmDelivery", "Rooms", new {id_sala = venda.id_sala,id_venda= venda.id})">Confirmar Entrega</a>
                     }
                     else
                     {

@@ -85,9 +85,9 @@ INSERT INTO [dbo].[chat]
      VALUES
 /******(<data, datetime,>,<mensagem, nvarchar(100),>,<id_utilizador, int,>,<id_sala, int,>)******/
 
-           ('2023-01-01 12:00:00', 'Hello, how are you?', 1, 1),
-           ('2023-01-02 14:30:00', 'Fine, thanks!', 2, 2),
-           ('2023-01-03 16:45:00', 'Great!', 3, 3);
+           ('2023-01-01 12:00:00', 'john_doe: Hello, how are you?', 1, 1),
+           ('2023-01-02 14:30:00', 'jane_smith: Fine, thanks!', 2, 2),
+           ('2023-01-03 16:45:00', 'bob_jones: Great!', 3, 3);
 
 GO
 
@@ -102,7 +102,7 @@ INSERT INTO [dbo].[venda]
 /******(<payment_method, nvarchar(20),>,<date, datetime,>,<verified, bit,>,<value, float>,<id_sala, int,>)******/
 
            (1,'Credit Card', '2023-01-02 14:30:00', 1,28.0, 1),
-           (2,'PayPal', '2023-01-03 16:45:00', 0,1.0, 2),
+           (2,'PayPal', '2023-01-03 16:45:00', 1,1.0, 2),
            (2,'Cash', '2023-01-04 18:00:00', 1,32.0, 3);
 
 GO
