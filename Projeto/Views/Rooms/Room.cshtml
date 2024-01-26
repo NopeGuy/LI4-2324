@@ -115,9 +115,10 @@
             <input name="id_utilizador" value="@ViewData["Id_user"]" type="text" hidden />
             <input type="text" name="id_sala" value="@ViewData["Id_sala"]" hidden />
 
-            <input type="text" id="messageWrite" name="message" class="form-control" />
+            <input type="text" id="messageWrite" name="msg" class="form-control" />
             <button type="submit" id="send-button" class="btn btn-primary">Enviar</button>
         </form>
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     </div>
 
 </body>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Noitcua.Models;
@@ -23,14 +24,87 @@ namespace Noitcua.Controllers
         public IActionResult Sales()
         {
             var salas = _context.sala;
+            if (TempData["ModelState"] is ModelStateDictionary modelState)
+            {
+                ModelState.Merge(modelState);
+            }
             return View(salas);
+        }
+
+        public IActionResult Exit(int salaId,int userId)
+        {
+            var sala = _context.sala.Find(salaId);
+            var comp = _context.comprador.FirstOrDefault(co => co.id_user == userId);
+            if(comp!=null)
+            {
+                var owner = _context.sala.FirstOrDefault(sa => sala.id_comprador == comp.id);
+                if(owner!=null)
+                {
+                    _context.sala.Remove(sala);
+                }
+            }
+            
+            _context.SaveChanges();
+            ModelState.AddModelError(string.Empty, "Sala Apagada com sucesso!");
+            TempData["ModelState"] = ModelState;
+            return RedirectToAction("Sales","Rooms");
+        }
+
+        public IActionResult Sold(int salaId,int userId, string handle,float price,string method)
+        {
+            var comp = _context.comprador.FirstOrDefault(c => c.id_user == userId);
+            if (comp == null)
+            {
+                ModelState.AddModelError(string.Empty, "Comando válido apenas para o comprador da sala.");
+                TempData["ModelState"] = ModelState;
+                return RedirectToAction("Room", "Rooms", new { id = salaId });
+            }
+
+            var userVen = _context.utilizador.FirstOrDefault(v => v.handle == handle);
+            if(userVen==null)
+            {
+                ModelState.AddModelError(string.Empty, "Handle inválida. Por favor utilize uma handle válida.");
+                TempData["ModelState"] = ModelState;
+                return RedirectToAction("Room", "Rooms", new { id = salaId });
+            }
+
+            var venHasSala = _context.vendedor_has_sala.Where(vhs => vhs.id_sala == salaId);
+            foreach(var v in venHasSala)
+            {
+                if (v.id_vendedor != userVen.id) _context.vendedor_has_sala.Remove(v);
+            }
+
+            venda venda = new();
+            venda.date = DateTime.Now;
+            venda.value = price;
+            venda.id_sala = salaId;
+            venda.id_vendedor = userVen.id;
+            venda.payment_method = method;
+            venda.verified = true;
+            _context.venda.Add(venda);
+
+            sala sala = _context.sala.Find(salaId);
+            sala.estado = 1;
+
+            _context.SaveChanges();
+            return RedirectToAction("Room", "Rooms", new { id = salaId });
         }
 
         public IActionResult Create()
         {
             var user = _context.utilizador.Find(HttpContext.Session.GetInt32("Id"));
             if (user == null) return RedirectToAction("Login", "Account");
-            ViewData["NumeroSalas"] = _context.sala.Where(s => s.id_comprador == user.id && s.estado == 0).Count().ToString();
+            comprador comp;
+            comp = _context.comprador.FirstOrDefault(c => c.id_user == user.id);
+            if (comp == null)
+            {
+                comprador novo = new();
+                novo.id_user = user.id;
+                _context.comprador.Add(novo);
+                _context.SaveChanges();
+                comp = novo;
+            }
+            ViewData["NumeroSalas"] = _context.sala.Where(s => s.id_comprador == comp.id && s.estado == 0).Count().ToString();
             return View();
         }
 
@@ -119,26 +193,6 @@ namespace Noitcua.Controllers
                 ViewData["Sala" + id_sala] = salaAtual.titulo;
                 vendas.Add(Venda);
             }
-            /*
-            // Join Sala com Venda
-            var salasWithVenda = salasAsComprador.Join(
-                _context.venda,
-                sala => sala.id,
-                venda => venda.id_sala,
-                (sala, venda) => new { Sala = sala, Venda = venda });
-
-            /**
-            // Join com vendedor
-            var result = await salasWithVenda.Join(
-                _context.vendedor,
-                combined => combined.Venda.id_vendedor,
-                vendedor => vendedor.id,
-                (combined, vendedor) => new
-                {
-                    Sala = combined.Sala,
-                    Venda = combined.Venda,
-                    Vendedor = vendedor
-                }).ToListAsync(); */
             return View(vendas);
         }
 
@@ -151,6 +205,10 @@ namespace Noitcua.Controllers
             if(user==null)
             {
                 return RedirectToAction("Login", "Account");
+            }
+            if (TempData["ModelState"] is ModelStateDictionary modelState)
+            {
+                ModelState.Merge(modelState);
             }
             bool isComp;
             var comprador = _context.comprador.FirstOrDefault(c => c.id_user == user);
@@ -192,7 +250,7 @@ namespace Noitcua.Controllers
             ViewData["Id_user"] = user;
 
             // Todas as mensagens deste chat
-            var chatMessages = _context.chat.Where(c => c.id_sala == id);
+            var chatMessages = _context.chat.Where(c => c.id_sala == id && (comprador != null ? c.id_utilizador != comprador.id : true));
 
             // Todos os ids unicos do chat
             var userIds =  chatMessages.Select(c => c.id_utilizador).Distinct().ToList();
@@ -249,16 +307,68 @@ namespace Noitcua.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SendMessage(string id_utilizador, string id_sala, string message)
+        public async Task<IActionResult> SendMessage(string id_utilizador, string id_sala, string msg)
         {
-            chat c = new chat();
-            //TODO: Parse de comandos
-            var nome = _context.utilizador.Where(u => u.id == int.Parse(id_utilizador)).FirstOrDefault().handle;
-            c.mensagem = nome + ": " + message;
-            c.id_sala = int.Parse(id_sala);
-            c.id_utilizador = int.Parse( id_utilizador);
+            int salaId = int.Parse(id_sala);
+            if (_context.sala.Find(salaId)==null)
+            {
+                ModelState.AddModelError(string.Empty, "Comprador eliminou a sala.");
+                TempData["ModelState"] = ModelState;
+                return RedirectToAction("Sales", "Rooms");
+            }
+
+            int userId = int.Parse(id_utilizador);
+            var venInSala = _context.vendedor.FirstOrDefault(v => v.id_user == userId);
+            if(venInSala == null)
+            {
+                ModelState.AddModelError(string.Empty, "O Comprador já escolheu um vendedor. Foi excluído da sala.");
+                TempData["ModelState"] = ModelState;
+                return RedirectToAction("Sales", "Rooms");
+            }
+
+            chat c = new();
+            if (msg[0].Equals("/"))
+            {
+                msg = msg[1..];
+                if (!msg.Any(a => a == '/'))
+                {
+                    if (msg.ToLower().Equals("exit") && _context.sala.Find(salaId)!=null)
+                    {
+                        Exit(salaId,userId);
+                    }
+                }
+
+                else
+                {
+                    string cmd = msg[..msg.IndexOf("@")];
+                    if (cmd == "Sold")
+                    {
+                        //sold@handle/price/method
+                    string handle = msg.Substring(msg.IndexOf("@") + 1, msg.IndexOf("/")); // handle
+
+                    msg = msg[(msg.IndexOf("/") + 1)..]; // price/method
+
+                    string prc = msg[..msg.IndexOf("/")]; //price
+                    float price = -1;
+                    float.TryParse(prc, out price);
+                    if (price < 0)
+                    {
+                        ModelState.AddModelError(string.Empty, "Valor inválido, por favor utilize um valor positivo com '.' como separador decimal.");
+                        TempData["ModelState"] = ModelState;
+                        return RedirectToAction("Room", "Rooms", new { id = c.id_sala });
+                    }
+
+                        string method = msg[(msg.IndexOf("/") + 1)..]; // method
+                        Sold(salaId,userId,handle,price,method);
+                    }
+                }
+            }
+            var nome = _context.utilizador.Where(u => u.id == userId).FirstOrDefault().handle;
+            c.mensagem = nome + ": " + msg;
+            c.id_sala = salaId;
+            c.id_utilizador = userId;
             c.data = DateTime.Now;
-            var msg = _context.chat.Add(c);
+            _context.chat.Add(c);
             await _context.SaveChangesAsync();
             return RedirectToAction("Room", "Rooms", new { id = c.id_sala });
         }
@@ -266,42 +376,39 @@ namespace Noitcua.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(sala info)
         {
-
             if (ModelState.IsValid)
             {
-                var userId = HttpContext.Session.GetInt32("Id");
+                var user = _context.utilizador.Find(HttpContext.Session.GetInt32("Id"));
 
-                if (userId != null)
-                {
-                    var comprador = _context.comprador.Where(a => a.id_user == (int)userId).ToList();
-                    if (comprador.Count == 0)
-                    {
-                        comprador novo = new comprador();
-                        novo.id_user = (int)userId;
-                        _context.comprador.Add(novo);
-                        await _context.SaveChangesAsync();
-                    }
-
-                    sala nova = new sala();
-                    nova.estado = 0;
-                    nova.titulo = info.titulo;
-                    nova.descricao = info.descricao;
-                    nova.id_comprador = _context.comprador.FirstOrDefault(a => a.id_user == (int)userId).id;
-                    _context.sala.Add(nova);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Room", "Rooms", new { id = nova.id });
-                }
-                else
+                if (user == null)
                 {
                     return RedirectToAction("Login", "Account");
                 }
-            }
-            else
-            {
-                ModelState.AddModelError(string.Empty, "Não foi possivel criar a sala...");
+
+                comprador comp = _context.comprador.FirstOrDefault(a => a.id_user == user.id);
+
+                var numSalas = _context.sala.Where(ns => ns.id_comprador == comp.id  && ns.estado == 0);
+                if (numSalas.Count() >= 3)
+                {
+                    ModelState.AddModelError(string.Empty, "Não pode possuir mais de três salas simultaneamente.");
+                    TempData["ModelState"] = ModelState;
+                    return RedirectToAction("Sales", "Rooms");
+                }
+
+                sala nova = new sala();
+                nova.estado = 0;
+                nova.titulo = info.titulo;
+                nova.descricao = info.descricao;
+                nova.id_comprador = comp.id;
+                _context.sala.Add(nova);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Room", "Rooms", new { id = nova.id });
             }
 
-            return View();
+            ModelState.AddModelError(string.Empty, "Não foi possivel criar a sala...");
+            TempData["ModelState"] = ModelState;
+
+            return RedirectToAction("Sales","Rooms");
         }
 
         [HttpGet]
