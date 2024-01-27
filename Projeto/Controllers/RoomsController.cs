@@ -4,6 +4,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Noitcua.Models;
 using System.Diagnostics;
+using System.IO.Pipelines;
 
 namespace Noitcua.Controllers
 {
@@ -91,11 +92,12 @@ namespace Noitcua.Controllers
                 return RedirectToAction("Room", "Rooms", new { id = salaId });
             }
 
+            /*
             var venHasSala = _context.vendedor_has_sala.Where(vhs => vhs.id_sala == salaId);
             foreach(var v in venHasSala)
             {
                 if (v.id_vendedor != userVen.id) _context.vendedor_has_sala.Remove(v);
-            }
+            }*/
 
             venda venda = new();
             venda.date = DateTime.Now;
@@ -341,67 +343,60 @@ namespace Noitcua.Controllers
             int salaId = int.Parse(id_sala);
             if (_context.sala.Find(salaId)==null)
             {
-                ModelState.AddModelError(string.Empty, "Comprador eliminou a sala.");
-                TempData["ModelState"] = ModelState;
+                //ModelState.AddModelError(string.Empty, "Comprador eliminou a sala.");
+                //TempData["ModelState"] = ModelState;
                 return RedirectToAction("Sales", "Rooms");
             }
 
             int userId = int.Parse(id_utilizador);
             var venInSala = _context.vendedor.FirstOrDefault(v => v.id_user == userId);
-            if(venInSala == null)
+            /*if (venInSala == null)
             {
                 ModelState.AddModelError(string.Empty, "O Comprador já escolheu um vendedor. Foi excluído da sala.");
                 TempData["ModelState"] = ModelState;
-                return RedirectToAction("Sales", "Rooms");
-            }
+                return RedirectToAction("Sales?error=O comprador já escolhe um vendedor", "Rooms");
+            }*/
 
-            chat c = new();
-            if (msg[0]=='/')
+            if (msg[0] == '/')
             {
                 msg = msg[1..];
-                if (!msg.Any(a => a == '/'))
+
+                if (msg.ToLower().Equals("exit") && _context.sala.Find(salaId) != null)
                 {
-                    if (msg.ToLower().Equals("exit") && _context.sala.Find(salaId)!=null)
-                    {
-                        Exit(salaId,userId);
-                    }
+                    Exit(salaId, userId);
                 }
 
-                else
+                var msg_splitted = msg.Split("/");
+
+                if (msg_splitted[0].ToLower().StartsWith("sold"))
                 {
-                    string cmd = msg[..msg.IndexOf("@")];
-                    if (cmd == "Sold")
-                    {
-                        //sold_handle/price/method
-                    string handle = msg.Substring(msg.IndexOf("@") + 1, msg.IndexOf("/")); // handle
-
-                    msg = msg[(msg.IndexOf("/") + 1)..]; // price/method
-
-                    string prc = msg[..msg.IndexOf("/")]; //price
+                    string handle = msg_splitted[0].Split("@")[1];
+                    string prc = msg_splitted[1];
                     float price = -1;
                     float.TryParse(prc, out price);
+                    var method = msg_splitted[2];
                     if (price < 0)
                     {
                         ModelState.AddModelError(string.Empty, "Valor inválido, por favor utilize um valor positivo com '.' como separador decimal.");
                         TempData["ModelState"] = ModelState;
-                        return RedirectToAction("Room", "Rooms", new { id = c.id_sala });
+                        return RedirectToAction("Room", "Rooms", new { id = id_sala });
                     }
-
-                        string method = msg[(msg.IndexOf("/") + 1)..]; // method
-                        Sold(salaId,userId,handle,price,method);
-                    }
+                    Sold(salaId, userId, handle, price, method);
                 }
             }
-            else { 
-            var nome = _context.utilizador.Where(u => u.id == userId).FirstOrDefault().handle;
-            c.mensagem = nome + ": " + msg;
-            c.id_sala = salaId;
-            c.id_utilizador = userId;
-            c.data = DateTime.Now;
-            _context.chat.Add(c);
+            else
+            {
+                chat c = new chat();
+                var nome = _context.utilizador.Where(u => u.id == userId).FirstOrDefault().handle;
+                c.mensagem = nome + ": " + msg;
+                c.id_sala = salaId;
+                c.id_utilizador = userId;
+                c.data = DateTime.Now;
+                _context.chat.Add(c);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Room", "Rooms", new { id = c.id_sala });
             }
-            await _context.SaveChangesAsync();
-            return RedirectToAction("Room", "Rooms", new { id = c.id_sala });
+            return RedirectToAction("Sales", "Rooms");
         }
 
         [HttpPost]
