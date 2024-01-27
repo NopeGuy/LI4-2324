@@ -186,7 +186,7 @@ GO
 CREATE TABLE [dbo].[chat](
 	[id] [int] IDENTITY(1,1) NOT NULL,
 	[data] [datetime] NOT NULL,
-	[mensagem] [nvarchar](100) NOT NULL,
+	[mensagem] [nvarchar](1000) NOT NULL,
 	[id_utilizador] [int] NOT NULL,
 	[id_sala] [int] NOT NULL,
  CONSTRAINT [PK_chat] PRIMARY KEY CLUSTERED 

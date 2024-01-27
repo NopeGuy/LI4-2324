@@ -33,21 +33,44 @@ namespace Noitcua.Controllers
 
         public IActionResult Exit(int salaId,int userId)
         {
-            var sala = _context.sala.Find(salaId);
-            var comp = _context.comprador.FirstOrDefault(co => co.id_user == userId);
-            if(comp!=null)
+            var id_comprador = _context.comprador.First(c => c.id_user == userId).id;
+
+            var sala = _context.sala.First(s => s.id == salaId);
+
+            if (sala.id_comprador == id_comprador)
             {
-                var owner = _context.sala.FirstOrDefault(sa => sala.id_comprador == comp.id);
-                if(owner!=null)
+                if (sala != null)
                 {
-                    _context.sala.Remove(sala);
+                    sala.estado = 2;
+                    _context.SaveChanges();
                 }
             }
-            
-            _context.SaveChanges();
-            ModelState.AddModelError(string.Empty, "Sala Apagada com sucesso!");
-            TempData["ModelState"] = ModelState;
-            return RedirectToAction("Sales","Rooms");
+            else
+            {
+                var ven = _context.vendedor.First(v => v.id_user == userId);
+                if (ven != null)
+                {
+                    if (sala != null)
+                    {
+                        var vhs = _context.vendedor_has_sala.First(v => v.id_sala == salaId && v.id_vendedor == ven.id);
+                        var sql = "DELETE from vendedor_has_sala WHERE id_sala = @salaId AND id_vendedor = @venId";
+                        _context.Database.ExecuteSqlRaw(sql,
+                                                       new SqlParameter("@salaId", salaId),
+                                                                                  new SqlParameter("@venId", ven.id));
+
+                        var uid = userId;
+                        var salaIDDD = salaId;
+                        var chats = _context.chat.Where(c => c.id_utilizador == userId && c.id_sala == salaId).ToList();
+                        foreach(var chat in chats )
+                        {
+                            _context.chat.Remove(chat);
+                        }
+                        _context.SaveChanges();
+                        
+                    }
+                }
+            }
+            return RedirectToAction("Profile", "Account");
         }
 
         public IActionResult Sold(int salaId,int userId, string handle,float price,string method)
@@ -210,6 +233,10 @@ namespace Noitcua.Controllers
             {
                 ModelState.Merge(modelState);
             }
+
+            if (_context.sala.Where(s => s.id == id).Count() == 0)
+                return RedirectToAction("Sales", "Rooms");
+
             bool isComp;
             var comprador = _context.comprador.FirstOrDefault(c => c.id_user == user);
             if(comprador==null)
@@ -237,6 +264,7 @@ namespace Noitcua.Controllers
                 var vendedorInSala = _context.vendedor_has_sala.FirstOrDefault(vs => vs.id_sala == id && vs.id_vendedor == ven.id);
                 if (vendedorInSala == null)
                 {
+
                     var sql = "INSERT INTO vendedor_has_sala (id_vendedor, id_sala) VALUES (@vendedorId, @salaId)";
                     _context.Database.ExecuteSqlRaw(sql,
                         new SqlParameter("@vendedorId", ven.id),
@@ -327,7 +355,7 @@ namespace Noitcua.Controllers
             }
 
             chat c = new();
-            if (msg[0].Equals("/"))
+            if (msg[0]=='/')
             {
                 msg = msg[1..];
                 if (!msg.Any(a => a == '/'))
@@ -363,12 +391,14 @@ namespace Noitcua.Controllers
                     }
                 }
             }
+            else { 
             var nome = _context.utilizador.Where(u => u.id == userId).FirstOrDefault().handle;
             c.mensagem = nome + ": " + msg;
             c.id_sala = salaId;
             c.id_utilizador = userId;
             c.data = DateTime.Now;
             _context.chat.Add(c);
+            }
             await _context.SaveChangesAsync();
             return RedirectToAction("Room", "Rooms", new { id = c.id_sala });
         }
