@@ -85,7 +85,8 @@ namespace Noitcua.Controllers
             }
 
             var userVen = _context.utilizador.FirstOrDefault(v => v.handle == handle);
-            if(userVen==null)
+            var vend = _context.vendedor.FirstOrDefault(v => v.id_user == userVen.id);
+            if (userVen==null)
             {
                 ModelState.AddModelError(string.Empty, "Handle inválida. Por favor utilize uma handle válida.");
                 TempData["ModelState"] = ModelState;
@@ -103,7 +104,7 @@ namespace Noitcua.Controllers
             venda.date = DateTime.Now;
             venda.value = price;
             venda.id_sala = salaId;
-            venda.id_vendedor = userVen.id;
+            venda.id_vendedor = vend.id;
             venda.payment_method = method;
             venda.verified = true;
             _context.venda.Add(venda);
@@ -370,18 +371,27 @@ namespace Noitcua.Controllers
 
                 if (msg_splitted[0].ToLower().StartsWith("sold"))
                 {
+                    var sala = _context.sala.Find(salaId);
+                    var comprador = _context.comprador.FirstOrDefault(c => c.id_user == userId);
+                    if (sala.id_comprador == comprador.id)
+                    {
                     string handle = msg_splitted[0].Split("@")[1];
                     string prc = msg_splitted[1];
                     float price = -1;
                     float.TryParse(prc, out price);
                     var method = msg_splitted[2];
                     if (price < 0)
+                        {
+                            ModelState.AddModelError(string.Empty, "Valor inválido, por favor utilize um valor positivo com '.' como separador decimal.");
+                            TempData["ModelState"] = ModelState;
+                            return RedirectToAction("Room", "Rooms", new { id = id_sala });
+                        }
+                    Sold(salaId, userId, handle, price, method);
+                    }
+                    else
                     {
-                        ModelState.AddModelError(string.Empty, "Valor inválido, por favor utilize um valor positivo com '.' como separador decimal.");
-                        TempData["ModelState"] = ModelState;
                         return RedirectToAction("Room", "Rooms", new { id = id_sala });
                     }
-                    Sold(salaId, userId, handle, price, method);
                 }
             }
             else
