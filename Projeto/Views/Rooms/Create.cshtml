@@ -1,14 +1,21 @@
 ﻿@model Noitcua.Models.sala
 @{
     ViewData["Title"] = "Criar Sala";
-}
-@{
-    var atualSalas = ViewData["NumeroSalas"];
+    var errorMessage = TempData["ErrorMessage"] as string;
+    var currentRooms = ViewData["NumeroSalas"] as string;
 }
 
 <h2>Criar Sala</h2>
 
-Salas: @atualSalas / 3
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">
+        @errorMessage
+    </div>
+}
+
+<p>Salas Criadas: @currentRooms / 3</p>
+
 <form asp-action="Create" method="post">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group">

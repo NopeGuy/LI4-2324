@@ -300,6 +300,7 @@ namespace Noitcua.Controllers
             ViewData["Handle_Comprador"] = "C " + compHandle;
             var chat = _context.chat.Where(c => c.id_sala == id);
             ViewData["Descricao"] = sala.descricao;
+            ViewData["titulo"] = sala.titulo;
 
 
             if (sala != null)
@@ -371,7 +372,7 @@ namespace Noitcua.Controllers
                     string cmd = msg[..msg.IndexOf("@")];
                     if (cmd == "Sold")
                     {
-                        //sold@handle/price/method
+                        //sold_handle/price/method
                     string handle = msg.Substring(msg.IndexOf("@") + 1, msg.IndexOf("/")); // handle
 
                     msg = msg[(msg.IndexOf("/") + 1)..]; // price/method
@@ -402,7 +403,7 @@ namespace Noitcua.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction("Room", "Rooms", new { id = c.id_sala });
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Create(sala info)
         {
@@ -417,12 +418,11 @@ namespace Noitcua.Controllers
 
                 comprador comp = _context.comprador.FirstOrDefault(a => a.id_user == user.id);
 
-                var numSalas = _context.sala.Where(ns => ns.id_comprador == comp.id  && ns.estado == 0);
+                var numSalas = _context.sala.Where(ns => ns.id_comprador == comp.id && ns.estado == 0);
                 if (numSalas.Count() >= 3)
                 {
-                    ModelState.AddModelError(string.Empty, "Não pode possuir mais de três salas simultaneamente.");
-                    TempData["ModelState"] = ModelState;
-                    return RedirectToAction("Sales", "Rooms");
+                    TempData["ErrorMessage"] = "Limite de salas a criar atingido. Elimine uma para prosseguir.";
+                    return RedirectToAction("Create", "Rooms");
                 }
 
                 sala nova = new sala();
@@ -435,11 +435,9 @@ namespace Noitcua.Controllers
                 return RedirectToAction("Room", "Rooms", new { id = nova.id });
             }
 
-            ModelState.AddModelError(string.Empty, "Não foi possivel criar a sala...");
-            TempData["ModelState"] = ModelState;
-
-            return RedirectToAction("Sales","Rooms");
+            return RedirectToAction("Sales", "Rooms");
         }
+
 
         [HttpGet]
         public async Task<IActionResult> ConfirmDelivery(string id_sala, string id_venda)

@@ -95,7 +95,8 @@
         </div>
         <div id="purchase-details">
             <h2>Detalhes Produto</h2>
-            <p>Item: @ViewData["Descricao"]</p>
+            <p>Item: @ViewData["titulo"]</p>
+            <p>Descrição: @ViewData["descricao"]</p>
             <div class="accounts">
                 <b>@ViewData["Handle_Comprador"]</b>
                 @if (ViewData["UsersHandles"] is List<string> usersHandles)
