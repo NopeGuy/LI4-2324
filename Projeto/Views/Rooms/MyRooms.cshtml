@@ -1,4 +1,4 @@
-@model IEnumerable<Noitcua.Models.sala>
+﻿@model IEnumerable<Noitcua.Models.sala>
 @{
     ViewData["Title"] = "MyRooms";
 }
@@ -61,8 +61,9 @@
             {
                 @if (ViewData["IdVend"] != null)
                 {
+                    var idComp = (int)ViewData["IdComp"];
                     var idVend = (int)ViewData["IdVend"];
-                    if (sala.id_comprador != idVend)
+                    if (sala.id_comprador != idComp || idComp == 0)
                     {
                         <div class="result-box">
                             <div class="result-title"><b>@sala.titulo</b></div>
