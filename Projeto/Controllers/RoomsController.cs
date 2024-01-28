@@ -90,6 +90,10 @@ namespace Noitcua.Controllers
             {
                 return RedirectToAction("Room", "Rooms", new { id = salaId });
             }
+            if (userVen.id == userId)
+            {
+                return RedirectToAction("Room", "Rooms", new { id = salaId });
+            }
             var vend = _context.vendedor.FirstOrDefault(v => v.id_user == userVen.id);
 
             /*
@@ -148,11 +152,6 @@ namespace Noitcua.Controllers
 
             bool isVendedor = vendedor != null;
             bool isComprador = comprador != null;
-
-            if (!isComprador && !isVendedor)
-            {
-                return NotFound("O utilizador ainda não participa em nenhuma sala!");
-            }
 
             var salas = new List<sala>();
 
@@ -402,6 +401,10 @@ namespace Noitcua.Controllers
                         }
                         var ven = _context.vendedor.FirstOrDefault(v => v.id_user == user.id);
                         if (ven == null)
+                        {
+                            return RedirectToAction("Room", "Rooms", new { id = id_sala });
+                        }
+                        if(ven.id_user == userId)
                         {
                             return RedirectToAction("Room", "Rooms", new { id = id_sala });
                         }
