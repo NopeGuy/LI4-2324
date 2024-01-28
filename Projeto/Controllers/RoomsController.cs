@@ -370,6 +370,7 @@ namespace Noitcua.Controllers
                 if (msg.ToLower().Equals("exit") && _context.sala.Find(salaId) != null)
                 {
                     Exit(salaId, userId);
+                    return RedirectToAction("Sales", "Rooms");
                 }
 
                 var msg_splitted = msg.Split("/");
