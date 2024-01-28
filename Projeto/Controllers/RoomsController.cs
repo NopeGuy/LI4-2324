@@ -161,7 +161,7 @@ namespace Noitcua.Controllers
             {
                 ViewData["IdComp"] = comprador.id;
                 var salasAsComprador = await _context.sala
-                    .Where(s => s.id_comprador == comprador.id && s.estado != 2)
+                    .Where(s => s.id_comprador == comprador.id && s.estado == 0)
                     .ToListAsync();
                 salas.AddRange(salasAsComprador);
             }
@@ -172,7 +172,7 @@ namespace Noitcua.Controllers
                 var salasAsVendedor = await _context.vendedor_has_sala
                     .Where(vs => vs.id_vendedor == vendedor.id)
                     .Join(_context.sala, vs => vs.id_sala, s => s.id, (vs, s) => s)
-                    .Where(s => s.estado != 2)
+                    .Where(s => s.estado == 0)
                     .ToListAsync();
                 salas.AddRange(salasAsVendedor);
             }
@@ -292,14 +292,20 @@ namespace Noitcua.Controllers
                 .Select(u => u.handle)
                 .ToList();
 
-            // Em Lista
-            ViewData["UsersHandles"] = usersHandles;
+
+
 
             ViewData["Last_time"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
             var sala = _context.sala.Where(s => s.id == id).First();
             var compUserId = _context.comprador.Find(sala.id_comprador).id_user;
             var compHandle = _context.utilizador.Find(compUserId).handle;
+
+            usersHandles.Remove(compHandle);
+
+            // Em Lista
+            ViewData["UsersHandles"] = usersHandles;
+
             ViewData["Handle_Comprador"] = "C " + compHandle;
             var chat = _context.chat.Where(c => c.id_sala == id);
             ViewData["Descricao"] = sala.descricao;
@@ -373,6 +379,10 @@ namespace Noitcua.Controllers
                 {
                     var sala = _context.sala.Find(salaId);
                     var comprador = _context.comprador.FirstOrDefault(c => c.id_user == userId);
+                    if(comprador==null)
+                    {
+                        return RedirectToAction("Room", "Rooms", new { id = salaId });
+                    }
                     if (sala.id_comprador == comprador.id)
                     {
                     string handle = msg_splitted[0].Split("@")[1];
@@ -442,6 +452,17 @@ namespace Noitcua.Controllers
 
             return RedirectToAction("Sales", "Rooms");
         }
+        public IActionResult Search(string searchQuery)
+        {
+            var salas = _context.sala
+                .Where(s => s.titulo.Contains(searchQuery))
+                .ToList();
+
+            return View("Sales", salas);
+        }
+
+
+
 
 
         [HttpGet]
@@ -462,3 +483,5 @@ namespace Noitcua.Controllers
         }
     }
 }
+
+
