@@ -59,10 +59,8 @@
         {
             @if (sala.estado!=2)
             {
-                @if(ViewData["IdComp"] != null)
+                @if(ViewData["IdVend"] != null)
                 {
-                    @if (sala.id_comprador != (int)ViewData["IdComp"])
-                    {
                         <div class="result-box">
                             <div class="result-title"><b>@sala.titulo</b></div>
                             <br />
@@ -70,7 +68,6 @@
                             <br /><br />
                             <a class="result-button" href="@Url.Action("Room", "Rooms", new {id=sala.id})">Entrar na Sala</a>
                         </div>
-                    }
                 }
                 else
                 {
