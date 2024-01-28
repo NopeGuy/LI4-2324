@@ -1,20 +1,20 @@
-﻿@model IEnumerable<Noitcua.Models.sala>
+@model IEnumerable<Noitcua.Models.sala>
 @{
     ViewData["Title"] = "MyRooms";
 }
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <style>
-            .result-box {
-                width: 100%;
-                padding: 15px;
-                background-color: #ccc;
-                border: 2px solid black;
-                border-radius: 10px;
-                margin-bottom: 10px;
-            }
+<head>
+    <style>
+        .result-box {
+            width: 100%;
+            padding: 15px;
+            background-color: #ccc;
+            border: 2px solid black;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
 
         .result-button {
             text-decoration: none;
@@ -23,18 +23,19 @@
             padding: 5px;
             border-radius: 15px;
         }
-        </style>
-    </head>
-    <body>    
+    </style>
+</head>
+<body>
     <div class="result-container">
         <h2><b>Salas Criadas</b>:</h2>
         @foreach (var sala in Model)
         {
-            @if (sala.estado!=2)
+            @if (sala.estado != 2)
             {
-                @if(ViewData["IdComp"]!= null)
+                @if (ViewData["IdComp"] != null)
                 {
-                    @if (sala.id_comprador == (int)ViewData["IdComp"])
+                    var idComp = (int)ViewData["IdComp"];
+                    if (sala.id_comprador == idComp)
                     {
                         <div class="result-box">
                             <div class="result-title"><b>@sala.titulo</b></div>
@@ -49,7 +50,6 @@
                 {
                     continue;
                 }
-
             }
         }
         <br />
@@ -57,11 +57,12 @@
         <h2><b>Outras Salas</b>:</h2>
         @foreach (var sala in Model)
         {
-            @if (sala.estado!=2)
+            @if (sala.estado != 2)
             {
-                @if(ViewData["IdVend"] != null)
+                @if (ViewData["IdVend"] != null)
                 {
-                    @if (sala.id_comprador != (int)ViewData["IdComp"])
+                    var idVend = (int)ViewData["IdVend"];
+                    if (sala.id_comprador != idVend)
                     {
                         <div class="result-box">
                             <div class="result-title"><b>@sala.titulo</b></div>
@@ -79,5 +80,5 @@
             }
         }
     </div>
-    </body>
+</body>
 </html>
