@@ -155,6 +155,7 @@ namespace Noitcua.Controllers
 
             var salas = new List<sala>();
 
+            ViewData["IdComp"] = 0;
             if (isComprador)
             {
                 ViewData["IdComp"] = comprador.id;
