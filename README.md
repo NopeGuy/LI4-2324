@@ -78,5 +78,8 @@ dotnet run
     - HTML/CSS
 
 ## Contributing
+
 Big thanks to @LuisFilipe6 for the big help programming.
-@NopeGuy, @HBernaH
+
+@NopeGuy, @HBernaH, @Gnomo03, @SenseiBott
+
