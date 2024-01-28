@@ -149,11 +149,6 @@ namespace Noitcua.Controllers
             bool isVendedor = vendedor != null;
             bool isComprador = comprador != null;
 
-            if (!isComprador && !isVendedor)
-            {
-                return NotFound("O utilizador ainda não participa em nenhuma sala!");
-            }
-
             var salas = new List<sala>();
 
             if (isComprador)
