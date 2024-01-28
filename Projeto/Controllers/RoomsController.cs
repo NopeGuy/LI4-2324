@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Noitcua.Models;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Pipelines;
 
@@ -31,16 +32,16 @@ namespace Noitcua.Controllers
             }
             return View(salas);
         }
-
         public IActionResult Exit(int salaId, int userId)
         {
-            var id_comprador = _context.comprador.First(c => c.id_user == userId).id;
+            var comprador = _context.comprador.FirstOrDefault(c => c.id_user == userId);
 
-            var sala = _context.sala.First(s => s.id == salaId);
-
-            if (sala.id_comprador == id_comprador)
+            if (comprador != null)
             {
-                if (sala != null)
+                var id_comprador = comprador.id;
+                var sala = _context.sala.FirstOrDefault(s => s.id == salaId);
+
+                if (sala != null && sala.id_comprador == id_comprador)
                 {
                     sala.estado = 2;
                     _context.SaveChanges();
@@ -48,16 +49,17 @@ namespace Noitcua.Controllers
             }
             else
             {
-                var ven = _context.vendedor.First(v => v.id_user == userId);
+                var ven = _context.vendedor.FirstOrDefault(v => v.id_user == userId);
                 if (ven != null)
                 {
+                    var sala = _context.sala.FirstOrDefault(s => s.id == salaId);
                     if (sala != null)
                     {
-                        var vhs = _context.vendedor_has_sala.First(v => v.id_sala == salaId && v.id_vendedor == ven.id);
+                        var vhs = _context.vendedor_has_sala.FirstOrDefault(v => v.id_sala == salaId && v.id_vendedor == ven.id);
                         var sql = "DELETE from vendedor_has_sala WHERE id_sala = @salaId AND id_vendedor = @venId";
                         _context.Database.ExecuteSqlRaw(sql,
-                                                       new SqlParameter("@salaId", salaId),
-                                                                                  new SqlParameter("@venId", ven.id));
+                                                        new SqlParameter("@salaId", salaId),
+                                                        new SqlParameter("@venId", ven.id));
 
                         var uid = userId;
                         var salaIDDD = salaId;
@@ -67,12 +69,13 @@ namespace Noitcua.Controllers
                             _context.chat.Remove(chat);
                         }
                         _context.SaveChanges();
-
                     }
                 }
             }
+
             return RedirectToAction("Profile", "Account");
         }
+
 
         public IActionResult Sold(int salaId, int userId, string handle, decimal price, string method)
         {
@@ -278,9 +281,9 @@ namespace Noitcua.Controllers
             ViewData["Id_user"] = user;
 
             // Todas as mensagens deste chat
-            var chatMessages = _context.chat.Where(c => c.id_sala == id && (comprador != null ? true : c.id_utilizador != comprador.id));
 
             // Todos os ids unicos do chat
+            var chatMessages = _context.chat.Where(c => c.id_sala == id).Distinct().ToList();
             var userIds = chatMessages.Select(c => c.id_utilizador).Distinct().ToList();
 
             // Handles dos users
