@@ -101,9 +101,7 @@ INSERT INTO [dbo].[venda]
      VALUES
 /******(<payment_method, nvarchar(20),>,<date, datetime,>,<verified, bit,>,<value, float>,<id_sala, int,>)******/
 
-           (1,'Credit Card', '2023-01-02 14:30:00', 1,28.0, 1),
-           (2,'PayPal', '2023-01-03 16:45:00', 1,1.0, 2),
-           (2,'Cash', '2023-01-04 18:00:00', 1,32.0, 3);
+           (1,'Credit Card', '2023-01-02 14:30:00', 1,28.0, 1)
 
 GO
 

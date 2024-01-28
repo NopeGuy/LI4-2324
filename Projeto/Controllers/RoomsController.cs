@@ -74,13 +74,11 @@ namespace Noitcua.Controllers
             return RedirectToAction("Profile", "Account");
         }
 
-        public IActionResult Sold(int salaId,int userId, string handle,float price,string method)
+        public IActionResult Sold(int salaId,int userId, string handle,decimal price,string method)
         {
             var comp = _context.comprador.FirstOrDefault(c => c.id_user == userId);
             if (comp == null)
             {
-                ModelState.AddModelError(string.Empty, "Comando válido apenas para o comprador da sala.");
-                TempData["ModelState"] = ModelState;
                 return RedirectToAction("Room", "Rooms", new { id = salaId });
             }
 
@@ -88,8 +86,6 @@ namespace Noitcua.Controllers
             var vend = _context.vendedor.FirstOrDefault(v => v.id_user == userVen.id);
             if (userVen==null)
             {
-                ModelState.AddModelError(string.Empty, "Handle inválida. Por favor utilize uma handle válida.");
-                TempData["ModelState"] = ModelState;
                 return RedirectToAction("Room", "Rooms", new { id = salaId });
             }
 
@@ -102,7 +98,8 @@ namespace Noitcua.Controllers
 
             venda venda = new();
             venda.date = DateTime.Now;
-            venda.value = price;
+            //change price to double then assign it to venda.value
+            venda.value = (double)price;
             venda.id_sala = salaId;
             venda.id_vendedor = vend.id;
             venda.payment_method = method;
@@ -185,6 +182,7 @@ namespace Noitcua.Controllers
         [HttpGet]
         public async Task<IActionResult> History()
         {
+            var vendas = new List<venda>();
             var userId = HttpContext.Session.GetInt32("Id");
             if (userId == null)
             {
@@ -195,21 +193,20 @@ namespace Noitcua.Controllers
 
             if (comprador == null)
             {
-                return NotFound("O utilizador ainda não possui nenhuma sala com uma venda em processo ou terminada.");
+                return View(vendas);
             }
 
             var vendaProcesso = await _context.sala.FirstOrDefaultAsync(s => s.id_comprador == comprador.id && s.estado != 0);
 
-            if (vendaProcesso.id == 0)
+            if (vendaProcesso == null)
             {
-                return NotFound("O utilizador ainda não possui nenhuma sala com uma venda em processo ou terminada.");
+                return View(vendas);
             }
 
             var salasAsComprador = _context.sala
                     .Where(s => s.id_comprador == comprador.id && s.estado != 0).ToList();
 
 
-            var vendas = new List<venda>();
             foreach (var salaAtual in salasAsComprador) { 
                 int id_sala = salaAtual.id;
                 venda Venda = await _context.venda.FirstOrDefaultAsync(v => v.id_sala == id_sala);
@@ -387,8 +384,8 @@ namespace Noitcua.Controllers
                     {
                     string handle = msg_splitted[0].Split("@")[1];
                     string prc = msg_splitted[1];
-                    float price = -1;
-                    float.TryParse(prc, out price);
+                    decimal price = -1;
+                    decimal.TryParse(prc, out price);
                     var method = msg_splitted[2];
                     if (price < 0)
                         {
