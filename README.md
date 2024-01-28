@@ -1,3 +1,8 @@
+<!-- Displaying the Image Centered -->
+<p align="center">
+  <img src="https://i.imgur.com/TABbPE0.png" alt="Inverted Auction Website" width="600">
+</p>
+
 # Inverted Auction Website (Noitcua)
 
 Welcome to the Inverted Auction Website, a dynamic platform designed for conducting inverted auctions seamlessly. This web application leverages ASP.NET Core for robust server-side development, Entity Framework Core for efficient database operations, and HTML/CSS for an intuitive user interface.
