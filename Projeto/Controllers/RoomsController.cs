@@ -109,7 +109,7 @@ namespace Noitcua.Controllers
             sala.estado = 1;
 
             _context.SaveChanges();
-            return RedirectToAction("Room", "Rooms", new { id = salaId });
+            return RedirectToAction("History", "Rooms");
         }
 
         public IActionResult Create()
@@ -390,8 +390,19 @@ namespace Noitcua.Controllers
                         {
                             return RedirectToAction("Room", "Rooms", new { id = id_sala });
                         }
+                        // Verify if handle is in the room then execute sold
+                        var user = _context.utilizador.FirstOrDefault(u => u.handle == handle);
+                        if (user == null)
+                        {
+                            return RedirectToAction("Room", "Rooms", new { id = id_sala });
+                        }
+                        var ven = _context.vendedor.FirstOrDefault(v => v.id_user == user.id);
+                        if (ven == null)
+                        {
+                            return RedirectToAction("Room", "Rooms", new { id = id_sala });
+                        }
                         Sold(salaId, userId, handle, price, method);
-                        return RedirectToAction("History", "Rooms", new { id = id_sala });
+                        return RedirectToAction("Sales", "Rooms");
                     }
                     else
                     {
@@ -411,7 +422,7 @@ namespace Noitcua.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Room", "Rooms", new { id = c.id_sala });
             }
-            return RedirectToAction("Sales", "Rooms");
+            return RedirectToAction("Room", "Rooms", new { id = id_sala });
         }
 
         [HttpPost]
