@@ -83,11 +83,11 @@ namespace Noitcua.Controllers
             }
 
             var userVen = _context.utilizador.FirstOrDefault(v => v.handle == handle);
-            var vend = _context.vendedor.FirstOrDefault(v => v.id_user == userVen.id);
-            if (userVen==null)
+            if (userVen == null)
             {
                 return RedirectToAction("Room", "Rooms", new { id = salaId });
             }
+            var vend = _context.vendedor.FirstOrDefault(v => v.id_user == userVen.id);
 
             /*
             var venHasSala = _context.vendedor_has_sala.Where(vhs => vhs.id_sala == salaId);
@@ -98,7 +98,6 @@ namespace Noitcua.Controllers
 
             venda venda = new();
             venda.date = DateTime.Now;
-            //change price to double then assign it to venda.value
             venda.value = (double)price;
             venda.id_sala = salaId;
             venda.id_vendedor = vend.id;
@@ -413,7 +412,7 @@ namespace Noitcua.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Room", "Rooms", new { id = c.id_sala });
             }
-            return RedirectToAction("Sales", "Rooms");
+            return RedirectToAction("Room", "Rooms", new { id = id_sala });
         }
 
         [HttpPost]
