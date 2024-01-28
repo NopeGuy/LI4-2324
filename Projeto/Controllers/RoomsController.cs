@@ -277,7 +277,7 @@ namespace Noitcua.Controllers
             ViewData["Id_user"] = user;
 
             // Todas as mensagens deste chat
-            var chatMessages = _context.chat.Where(c => c.id_sala == id && (comprador != null ? c.id_utilizador != comprador.id : true));
+            var chatMessages = _context.chat.Where(c => c.id_sala == id && (comprador != null ? true : c.id_utilizador != comprador.id));
 
             // Todos os ids unicos do chat
             var userIds =  chatMessages.Select(c => c.id_utilizador).Distinct().ToList();
@@ -306,7 +306,6 @@ namespace Noitcua.Controllers
             var chat = _context.chat.Where(c => c.id_sala == id);
             ViewData["Descricao"] = sala.descricao;
             ViewData["titulo"] = sala.titulo;
-
 
             if (sala != null)
             {
