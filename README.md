@@ -1,26 +1,41 @@
-# Noitcua (Inverted auction for LI4)
+# Inverted Auction Website (Noitcua)
 
-Short description of your project.
+Welcome to the Inverted Auction Website, a dynamic platform designed for conducting inverted auctions seamlessly. This web application leverages ASP.NET Core for robust server-side development, Entity Framework Core for efficient database operations, and HTML/CSS for an intuitive user interface.
 
 ## Table of Contents
 
 - [Introduction](#introduction)
 - [Getting Started](#getting-started)
+- [Usage](#usage)
+- [Features](#features)
 - [Screenshots](#screenshots)
 - [Built With](#built-with)
 - [Contributing](#contributing)
 
+
 ## Introduction
 
-Explain the purpose and main features of your project.
+In the realm of online auctions, the Inverted Auction Website stands out as an innovative platform that flips the traditional auction model on its head. Instead of buyers bidding up prices, sellers compete to offer the most attractive deal, resulting in a unique and exciting auction experience catered for the consumer.
+
+This project is built on the foundation of .NET Core, ensuring cross-platform compatibility and high-performance server-side capabilities. The Entity Framework Core handles interactions with the SQL database, providing a reliable and efficient data management system.
 
 ## Getting Started
+
+To explore the functionalities of the Inverted Auction Website, follow the easy steps outlined in the [Getting Started](#getting-started) section. You'll need the .NET Core SDK and other specified dependencies to run the application locally.
+
+## Usage
+
+When in a room, you can type /exit to leave the room if you're a seller or delete it if you're a buyer. Also to confirm you want to buy something you just type /sold@Handle/Price/Payment_Method
+
+## Features
+
+- **Dynamic Auctions:** Experience the thrill of dynamic auctions where sellers compete with each other to provide the best deals.
+- **User-Friendly Interface:** Enjoy an intuitive user interface designed with HTML and CSS to enhance the overall user experience.
+- **Real-time Communication:** Engage in real-time communication through chat functionalities to facilitate smooth interactions between buyers and sellers.
 
 ### Prerequisites
 
 - .NET Core SDK
-- Your specific dependencies...
-
 ### Installation
 
 Clone the repository:
@@ -44,7 +59,11 @@ dotnet run
 
 ## Screenshots
 
-Include screenshots or visual representations of your project if applicable.
+![Login](https://i.imgur.com/fx3KLAR.png)
+![Profile](https://imgur.com/ONl9akF)
+![Sales](https://i.imgur.com/3j96wgX.png)
+![Chat](https://imgur.com/b6YdlZb)
+
 
 
 ## Built With
@@ -54,5 +73,5 @@ Include screenshots or visual representations of your project if applicable.
     - HTML/CSS
 
 ## Contributing
-Big thanks to @LuisFilipe6 for the big help.
+Big thanks to @LuisFilipe6 for the big help programming.
 @NopeGuy, @HBernaH
