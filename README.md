@@ -76,6 +76,7 @@ dotnet run
     - ASP.NET Core
     - Entity Framework Core
     - HTML/CSS
+    - SQL Database
 
 ## Contributing
 
