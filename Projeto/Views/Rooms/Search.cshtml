@@ -36,6 +36,11 @@
             color: gray;
         }
 
+        .align-content-center {
+            margin: auto;
+            width: 50%;
+        }
+
         .result-button {
             text-decoration: none;
             color: black;
@@ -46,6 +51,7 @@
     </style>
 </head>
 <body>
+    <div class="align-content-center">
     <div class="search-container">
         <form method="get" action="@Url.Action("Search", "Rooms")">
             <label for="searchQuery">Procurar Salas:</label>
@@ -55,6 +61,9 @@
     </div>
 
     <div class="result-container">
+        <h2>
+            <b>Resultados de Pesquisa para :</b>@ViewData["SearchQuery"]
+            </h2>
         @if (Model != null && Model.Any())
         {
             foreach (var sala in Model)

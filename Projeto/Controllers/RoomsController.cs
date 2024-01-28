@@ -454,11 +454,12 @@ namespace Noitcua.Controllers
         }
         public IActionResult Search(string searchQuery)
         {
+            ViewData["SearchQuery"] = searchQuery;
             var salas = _context.sala
-                .Where(s => s.titulo.Contains(searchQuery))
+                .Where(s => s.titulo.Contains(searchQuery) && s.estado == 0)
                 .ToList();
 
-            return View("Sales", salas);
+            return View("Search", salas);
         }
 
 
