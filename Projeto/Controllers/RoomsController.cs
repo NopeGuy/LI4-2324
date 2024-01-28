@@ -32,7 +32,7 @@ namespace Noitcua.Controllers
             return View(salas);
         }
 
-        public IActionResult Exit(int salaId,int userId)
+        public IActionResult Exit(int salaId, int userId)
         {
             var id_comprador = _context.comprador.First(c => c.id_user == userId).id;
 
@@ -62,19 +62,19 @@ namespace Noitcua.Controllers
                         var uid = userId;
                         var salaIDDD = salaId;
                         var chats = _context.chat.Where(c => c.id_utilizador == userId && c.id_sala == salaId).ToList();
-                        foreach(var chat in chats )
+                        foreach (var chat in chats)
                         {
                             _context.chat.Remove(chat);
                         }
                         _context.SaveChanges();
-                        
+
                     }
                 }
             }
             return RedirectToAction("Profile", "Account");
         }
 
-        public IActionResult Sold(int salaId,int userId, string handle,decimal price,string method)
+        public IActionResult Sold(int salaId, int userId, string handle, decimal price, string method)
         {
             var comp = _context.comprador.FirstOrDefault(c => c.id_user == userId);
             if (comp == null)
@@ -141,7 +141,7 @@ namespace Noitcua.Controllers
 
             var vendedor = await _context.vendedor.FirstOrDefaultAsync(v => v.id_user == userId);
             var comprador = await _context.comprador.FirstOrDefaultAsync(c => c.id_user == userId);
-            
+
 
             bool isVendedor = vendedor != null;
             bool isComprador = comprador != null;
@@ -152,7 +152,7 @@ namespace Noitcua.Controllers
             }
 
             var salas = new List<sala>();
-            
+
             if (isComprador)
             {
                 ViewData["IdComp"] = comprador.id;
@@ -206,7 +206,8 @@ namespace Noitcua.Controllers
                     .Where(s => s.id_comprador == comprador.id && s.estado != 0).ToList();
 
 
-            foreach (var salaAtual in salasAsComprador) { 
+            foreach (var salaAtual in salasAsComprador)
+            {
                 int id_sala = salaAtual.id;
                 venda Venda = await _context.venda.FirstOrDefaultAsync(v => v.id_sala == id_sala);
                 var vendedor = _context.vendedor.FirstOrDefault(v => v.id == Venda.id_vendedor);
@@ -224,7 +225,7 @@ namespace Noitcua.Controllers
         public IActionResult Room(int id)
         {
             var user = HttpContext.Session.GetInt32("Id");
-            if(user==null)
+            if (user == null)
             {
                 return RedirectToAction("Login", "Account");
             }
@@ -238,7 +239,7 @@ namespace Noitcua.Controllers
 
             bool isComp;
             var comprador = _context.comprador.FirstOrDefault(c => c.id_user == user);
-            if(comprador==null)
+            if (comprador == null)
             {
                 isComp = false;
             }
@@ -248,7 +249,7 @@ namespace Noitcua.Controllers
                 isComp = owner != null;
             }
 
-            if(!isComp)
+            if (!isComp)
             {
                 var vendedor = _context.vendedor.FirstOrDefault(v => v.id_user == user);
                 if (vendedor == null)
@@ -280,7 +281,7 @@ namespace Noitcua.Controllers
             var chatMessages = _context.chat.Where(c => c.id_sala == id && (comprador != null ? true : c.id_utilizador != comprador.id));
 
             // Todos os ids unicos do chat
-            var userIds =  chatMessages.Select(c => c.id_utilizador).Distinct().ToList();
+            var userIds = chatMessages.Select(c => c.id_utilizador).Distinct().ToList();
 
             // Handles dos users
             var usersHandles = _context.utilizador
@@ -343,7 +344,7 @@ namespace Noitcua.Controllers
         public async Task<IActionResult> SendMessage(string id_utilizador, string id_sala, string msg)
         {
             int salaId = int.Parse(id_sala);
-            if (_context.sala.Find(salaId)==null)
+            if (_context.sala.Find(salaId) == null)
             {
                 //ModelState.AddModelError(string.Empty, "Comprador eliminou a sala.");
                 //TempData["ModelState"] = ModelState;
@@ -374,24 +375,23 @@ namespace Noitcua.Controllers
                 {
                     var sala = _context.sala.Find(salaId);
                     var comprador = _context.comprador.FirstOrDefault(c => c.id_user == userId);
-                    if(comprador==null)
+                    if (comprador == null)
                     {
                         return RedirectToAction("Room", "Rooms", new { id = salaId });
                     }
                     if (sala.id_comprador == comprador.id)
                     {
-                    string handle = msg_splitted[0].Split("@")[1];
-                    string prc = msg_splitted[1];
-                    decimal price = -1;
-                    decimal.TryParse(prc, out price);
-                    var method = msg_splitted[2];
-                    if (price < 0)
+                        string handle = msg_splitted[0].Split("@")[1];
+                        string prc = msg_splitted[1];
+                        decimal price = -1;
+                        decimal.TryParse(prc, out price);
+                        var method = msg_splitted[2];
+                        if (price < 0)
                         {
-                            ModelState.AddModelError(string.Empty, "Valor inválido, por favor utilize um valor positivo com '.' como separador decimal.");
-                            TempData["ModelState"] = ModelState;
                             return RedirectToAction("Room", "Rooms", new { id = id_sala });
                         }
-                    Sold(salaId, userId, handle, price, method);
+                        Sold(salaId, userId, handle, price, method);
+                        return RedirectToAction("History", "Rooms", new { id = id_sala });
                     }
                     else
                     {
@@ -411,7 +411,7 @@ namespace Noitcua.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction("Room", "Rooms", new { id = c.id_sala });
             }
-            return RedirectToAction("Room", "Rooms", new { id = id_sala });
+            return RedirectToAction("Sales", "Rooms");
         }
 
         [HttpPost]
