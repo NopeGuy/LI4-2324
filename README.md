@@ -60,9 +60,9 @@ dotnet run
 ## Screenshots
 
 ![Login](https://i.imgur.com/fx3KLAR.png)
-![Profile](https://imgur.com/ONl9akF)
+![Profile](https://i.imgur.com/ONl9akF.png)
 ![Sales](https://i.imgur.com/3j96wgX.png)
-![Chat](https://imgur.com/b6YdlZb)
+![Chat](https://i.imgur.com/3j96wgX.png)
 
 
 
