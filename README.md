@@ -1,6 +1,6 @@
 <!-- Displaying the Image Centered -->
 <p align="center">
-  <img src="https://i.imgur.com/TABbPE0.png" alt="Inverted Auction Website" width="600">
+  <img src="https://i.imgur.com/TABbPE0.png" alt="Inverted Auction Website" width="400">
 </p>
 
 # Inverted Auction Website (Noitcua)
