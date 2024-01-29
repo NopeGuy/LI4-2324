@@ -31,17 +31,17 @@ namespace Noitcua.Controllers
                 ModelState.Merge(modelState);
             }
             return View(salas);
-        }
+        }        
+        
         public IActionResult Exit(int salaId, int userId)
         {
             var comprador = _context.comprador.FirstOrDefault(c => c.id_user == userId);
+            var id_comprador = comprador.id;
+            var sala = _context.sala.FirstOrDefault(s => s.id == salaId);
 
-            if (comprador != null)
+            if (comprador != null && sala.id_comprador == id_comprador)
             {
-                var id_comprador = comprador.id;
-                var sala = _context.sala.FirstOrDefault(s => s.id == salaId);
-
-                if (sala != null && sala.id_comprador == id_comprador)
+                if (sala != null)
                 {
                     sala.estado = 2;
                     _context.SaveChanges();
@@ -52,7 +52,6 @@ namespace Noitcua.Controllers
                 var ven = _context.vendedor.FirstOrDefault(v => v.id_user == userId);
                 if (ven != null)
                 {
-                    var sala = _context.sala.FirstOrDefault(s => s.id == salaId);
                     if (sala != null)
                     {
                         var vhs = _context.vendedor_has_sala.FirstOrDefault(v => v.id_sala == salaId && v.id_vendedor == ven.id);
@@ -75,8 +74,7 @@ namespace Noitcua.Controllers
 
             return RedirectToAction("Profile", "Account");
         }
-
-
+        
         public IActionResult Sold(int salaId, int userId, string handle, decimal price, string method)
         {
             var comp = _context.comprador.FirstOrDefault(c => c.id_user == userId);
