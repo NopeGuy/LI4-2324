@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -31,15 +31,18 @@ namespace Noitcua.Controllers
                 ModelState.Merge(modelState);
             }
             return View(salas);
-        }        
-        
+        }
         public IActionResult Exit(int salaId, int userId)
         {
+            var id_comprador = 0;
             var comprador = _context.comprador.FirstOrDefault(c => c.id_user == userId);
-            var id_comprador = comprador.id;
+            if(comprador != null)
+            {
+                id_comprador = comprador.id;
+            }
             var sala = _context.sala.FirstOrDefault(s => s.id == salaId);
 
-            if (comprador != null && sala.id_comprador == id_comprador)
+            if (sala.id_comprador == id_comprador)
             {
                 if (sala != null)
                 {
@@ -74,7 +77,8 @@ namespace Noitcua.Controllers
 
             return RedirectToAction("Profile", "Account");
         }
-        
+
+
         public IActionResult Sold(int salaId, int userId, string handle, decimal price, string method)
         {
             var comp = _context.comprador.FirstOrDefault(c => c.id_user == userId);
@@ -163,6 +167,7 @@ namespace Noitcua.Controllers
                 salas.AddRange(salasAsComprador);
             }
 
+            //ViewData["IdVend"] = 0;
             if (isVendedor)
             {
                 ViewData["IdVend"] = vendedor.id;
