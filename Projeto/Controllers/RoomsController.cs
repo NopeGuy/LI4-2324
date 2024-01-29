@@ -34,16 +34,19 @@ namespace Noitcua.Controllers
         }
         public IActionResult Exit(int salaId, int userId)
         {
+            var id_comprador = 0;
             var comprador = _context.comprador.FirstOrDefault(c => c.id_user == userId);
-
-            if (comprador != null)
+            if(comprador != null)
             {
-                var id_comprador = comprador.id;
-                var sala = _context.sala.FirstOrDefault(s => s.id == salaId);
+                id_comprador = comprador.id;
+            }
+            var sala = _context.sala.FirstOrDefault(s => s.id == salaId);
 
-                if (sala != null && sala.id_comprador == id_comprador)
+            if (sala.id_comprador == id_comprador)
+            {
+                if (sala != null)
                 {
-                    sala.estado = 2;
+                    sala.estado = 3;
                     _context.SaveChanges();
                 }
             }
@@ -52,7 +55,6 @@ namespace Noitcua.Controllers
                 var ven = _context.vendedor.FirstOrDefault(v => v.id_user == userId);
                 if (ven != null)
                 {
-                    var sala = _context.sala.FirstOrDefault(s => s.id == salaId);
                     if (sala != null)
                     {
                         var vhs = _context.vendedor_has_sala.FirstOrDefault(v => v.id_sala == salaId && v.id_vendedor == ven.id);
@@ -165,6 +167,7 @@ namespace Noitcua.Controllers
                 salas.AddRange(salasAsComprador);
             }
 
+            //ViewData["IdVend"] = 0;
             if (isVendedor)
             {
                 ViewData["IdVend"] = vendedor.id;
@@ -206,7 +209,7 @@ namespace Noitcua.Controllers
             }
 
             var salasAsComprador = _context.sala
-                    .Where(s => s.id_comprador == comprador.id && s.estado != 0).ToList();
+                    .Where(s => s.id_comprador == comprador.id && s.estado != 0 && s.estado != 3).ToList();
 
 
             foreach (var salaAtual in salasAsComprador)
