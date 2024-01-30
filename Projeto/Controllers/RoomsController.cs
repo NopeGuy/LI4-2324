@@ -365,7 +365,11 @@ namespace Noitcua.Controllers
                 TempData["ModelState"] = ModelState;
                 return RedirectToAction("Sales?error=O comprador já escolhe um vendedor", "Rooms");
             }*/
-
+            if (msg == null)
+            {
+                return RedirectToAction("Room", "Rooms", new { id = id_sala });
+            }
+            
             if (msg[0] == '/')
             {
                 msg = msg[1..];
